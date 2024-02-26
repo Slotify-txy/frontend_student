@@ -1,10 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
-import MyCalendar from './component/basicCalendar';
+import Scheduler from './component/Scheduler/Scheduler';
 
 function App() {
   return (
-    <MyCalendar></MyCalendar>
+    <Scheduler />
   );
 }
 
