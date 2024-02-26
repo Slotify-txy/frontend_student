@@ -2,7 +2,8 @@ import React, { useEffect, useCallback, useState } from 'react'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import withDragAndProp from "react-big-calendar/lib/addons/dragAndDrop"
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css"
-import moment from 'moment'
+import Moment from 'moment'
+import { extendMoment } from 'moment-range';
 import { v4 as uuidv4 } from 'uuid';
 import { apiSlice as api, useGetSlotsQuery } from '../../api/apiSlice'
 import { useDispatch } from 'react-redux'
@@ -10,7 +11,8 @@ import { Box } from '@mui/material'
 import { convertSlots } from '../../util/slotUtil'
 import CustomEventComponent from './CustomEventComponent'
 
-const localizer = momentLocalizer(moment)
+const moment = extendMoment(Moment)
+const localizer = momentLocalizer(Moment)
 const timeFormat = "YYYY-MM-DD[T]HH:mm:ss"
 const DnDCalendar = withDragAndProp(Calendar)
 
@@ -19,6 +21,9 @@ export default function ScheduleCalendar() {
     const dispatch = useDispatch()
     const onChangeSlotTime = useCallback(
         (start, end, id) => {
+            if (isOverlapped(start, end, id)) {
+                return
+            }
             dispatch(
                 api.util.upsertQueryData('getSlots', { studentId: 10, coachId: 10 },
                     data.map(slot =>
@@ -34,6 +39,9 @@ export default function ScheduleCalendar() {
 
     const onSelect = useCallback(
         (start, end) => {
+            if (isOverlapped(start, end)) {
+                return
+            }
             dispatch(
                 api.util.upsertQueryData('getSlots', { studentId: 10, coachId: 10 },
                     [...data, {
@@ -47,6 +55,24 @@ export default function ScheduleCalendar() {
         },
         [data]
     )
+
+    // check if the slot will overlaps with existing slots
+    const isOverlapped = useCallback(
+        (start, end, id = undefined) => {
+            return !data.every(slot => {
+                if (id && slot.id === id) {
+                    return true;
+                }
+                const range1 = moment.range(start, end);
+                const range2 = moment.range(moment(slot.start), moment(slot.end));
+                const result = range1.overlaps(range2)
+                if (result) {
+                    // todo: send notification
+                    return false
+                }
+                return true
+            })
+        }, [data])
 
     if (isFetching) {
         return <Box>Loading...</Box>
