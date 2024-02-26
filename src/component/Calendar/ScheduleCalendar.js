@@ -8,6 +8,7 @@ import { apiSlice as api, useGetSlotsQuery } from '../../api/apiSlice'
 import { useDispatch } from 'react-redux'
 import { Box } from '@mui/material'
 import { convertSlots } from '../../util/slotUtil'
+import CustomEventComponent from './CustomEventComponent'
 
 const localizer = momentLocalizer(moment)
 const timeFormat = "YYYY-MM-DD[T]HH:mm:ss"
@@ -69,11 +70,22 @@ export default function ScheduleCalendar() {
                 onEventResize={({ start, end, event }) => {
                     onChangeSlotTime(start, end, event.id)
                 }}
-                selectable={true}
+                selectable={'true'}
                 onSelectSlot={({ start, end }) => {
                     onSelect(start, end)
+                }}
+                // eventPropGetter={(event) => {
+                //     const backgroundColor = 'yellow';
+                //     return { style: { backgroundColor } }
+                // }}
+                components={{
+                    event: CustomEventComponent,
+                    // eventWrapper: CustomEventWrapper,
+                    // eventContainerWrapper: MyEventContainerWrapper
+                    // tooltipAccessor: TooltipAccessor
                 }}
             />
         </div>
     )
 }
+

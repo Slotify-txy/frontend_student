@@ -1,6 +1,6 @@
 import { Box, Button, Container, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import ScheduleCalendar from './ScheduleCalendar'
+import ScheduleCalendar from '../Calendar/ScheduleCalendar'
 import { useCreateSlotsMutation, useDeleteSlotsMutation, useGetSlotsQuery } from '../../api/apiSlice'
 import moment from 'moment'
 
@@ -49,7 +49,7 @@ const Bar = () => {
     }
 
     return (
-        <Box sx={{ height: 300, backgroundColor: '#cfe8fc' }}>
+        <Box sx={{ backgroundColor: '#cfe8fc' }}>
             <Button variant="outlined" onClick={schedule}>Schedule</Button>
             <Button variant="outlined" onClick={clearSlots}>Clear Slot</Button>
         </Box>
