@@ -1,10 +1,8 @@
 import { Box, Button, Container, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import ScheduleCalendar from './ScheduleCalendar'
-import * as api from '../../api'
 import { useCreateSlotsMutation, useDeleteSlotsMutation, useGetSlotsQuery } from '../../api/apiSlice'
 import moment from 'moment'
-import { v4 as uuidv4 } from 'uuid';
 
 const timeFormat = "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
 
