@@ -13,10 +13,12 @@ code {
 }
 
 .rbc-events-container {
-  width: 100% !important;
+  /* width: 100% !important; */
 }
 
 .rbc-event {
+  border: 0px !important;
+  background-color: transparent !important;
   padding: 0 !important;
   overflow: visible !important;
 }

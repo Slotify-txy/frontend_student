@@ -38,7 +38,7 @@ const CustomEventComponent = ({ event }) => {
 
     return (
 
-        <Box sx={{ height: '100%', paddingX: "0.3rem", overflow: 'hidden', backgroundColor: statusColor[status].backgroundColor, border: 0 }} onMouseEnter={() => setOnHover(true)} onMouseLeave={() => setOnHover(false)}>
+        <Box sx={{ height: '100%', paddingX: "0.3rem", overflow: 'hidden', backgroundColor: statusColor[status].backgroundColor, borderRadius: 2 }} onMouseEnter={() => setOnHover(true)} onMouseLeave={() => setOnHover(false)}>
 
             <Box sx={{ display: "flex", width: '100%', flexDirection: 'row', justifyContent: "space-between", alignItems: 'center' }}>
                 <Typography sx={{ fontSize: 15, fontWeight: 700, alignSelf: 'center', color: statusColor[status].color }} >{convertStatusToText(status)}</Typography>
