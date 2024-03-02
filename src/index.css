@@ -17,8 +17,8 @@ code {
 }
 
 .rbc-event {
-  border: 0px !important;
   background-color: transparent !important;
+  border-radius: 8px !important; // need to be same as CustomEventComponent's
   padding: 0 !important;
   overflow: visible !important;
 }
