@@ -4,7 +4,7 @@ import ScheduleCalendar from '../Calendar/ScheduleCalendar'
 import { useCreateSlotsMutation, useDeleteSlotsMutation, useGetSlotsQuery } from '../../api/apiSlice'
 import moment from 'moment'
 
-const timeFormat = "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
+const timeFormat = "YYYY-MM-DD[T]HH:mm:ss"
 
 export default function Scheduler() {
     return (
