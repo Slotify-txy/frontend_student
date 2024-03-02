@@ -9,11 +9,12 @@ export const apiSlice = createApi({
         getSlots: builder.query({
             query: ({ studentId, coachId }) => `/slot/${studentId}/${coachId}`,
             transformResponse: (response) => (
-                response.map(({ startAt, endAt }) => (
+                response.map(({ startAt, endAt, status }) => (
                     {
                         id: uuidv4(),
                         start: startAt,
                         end: endAt,
+                        status,
                         isDraggable: true
                     }
                 ))

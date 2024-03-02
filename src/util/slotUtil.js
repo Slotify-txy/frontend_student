@@ -10,3 +10,7 @@ export const convertSlots = (data) => {
         }
     })
 }
+
+export const convertStatusToText = (status) => {
+    return status.split('_').map(status => status.toLowerCase()).join(" ")
+}

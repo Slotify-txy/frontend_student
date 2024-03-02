@@ -10,6 +10,7 @@ import { useDispatch } from 'react-redux'
 import { Box } from '@mui/material'
 import { convertSlots } from '../../util/slotUtil'
 import CustomEventComponent from './CustomEventComponent'
+import * as SlotStatusConstants from "../../constants/slotStatus"
 
 const moment = extendMoment(Moment)
 const localizer = momentLocalizer(Moment)
@@ -48,6 +49,7 @@ export default function ScheduleCalendar() {
                         id: uuidv4(),
                         start: moment(start).format(timeFormat),
                         end: moment(end).format(timeFormat),
+                        status: SlotStatusConstants.AVAILABLE,
                         isDraggable: true
                     }]
                 ),

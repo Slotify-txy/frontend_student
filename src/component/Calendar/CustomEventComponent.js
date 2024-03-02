@@ -5,11 +5,27 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch } from 'react-redux';
 import { apiSlice as api, useGetSlotsQuery } from '../../api/apiSlice'
+import { blue, yellow } from '@mui/material/colors';
+import * as SlotStatusConstants from "../../constants/slotStatus"
+import { convertStatusToText } from '../../util/slotUtil';
+
+const statusColor = {
+    [SlotStatusConstants.AVAILABLE]: {
+        backgroundColor: blue[200],
+        color: blue[700],
+    },
+    [SlotStatusConstants.WAITING_FOR_ARRANGING]: {
+        backgroundColor: yellow[300],
+        color: yellow[700],
+    }
+}
+
 
 const CustomEventComponent = ({ event }) => {
     const { data, isSuccess } = useGetSlotsQuery({ studentId: 10, coachId: 10 })
     const start = moment(event.start).format('hh:mm A')
     const end = moment(event.end).format('hh:mm A')
+    const status = event.status
     const [onHover, setOnHover] = useState(false)
     const dispatch = useDispatch()
 
@@ -22,16 +38,16 @@ const CustomEventComponent = ({ event }) => {
 
     return (
 
-        <Box sx={{ height: '100%', paddingX: "0.1rem", overflow: 'hidden', backgroundColor: 'rgb(3, 155, 229)' }} onMouseEnter={() => setOnHover(true)} onMouseLeave={() => setOnHover(false)}>
+        <Box sx={{ height: '100%', paddingX: "0.3rem", overflow: 'hidden', backgroundColor: statusColor[status].backgroundColor, border: 0 }} onMouseEnter={() => setOnHover(true)} onMouseLeave={() => setOnHover(false)}>
 
             <Box sx={{ display: "flex", width: '100%', flexDirection: 'row', justifyContent: "space-between", alignItems: 'center' }}>
-                <Typography sx={{ fontSize: 15, fontWeight: 700, alignSelf: 'center' }} >Available</Typography>
+                <Typography sx={{ fontSize: 15, fontWeight: 700, alignSelf: 'center', color: statusColor[status].color }} >{convertStatusToText(status)}</Typography>
                 {
                     // todo: make ui better
                     onHover &&
                     <Tooltip title="Delete">
-                        <IconButton onClick={deleteSlot} sx={{ color: 'red', padding: 0, alignSelf: 'center' }} aria-label="delete">
-                            <HighlightOffIcon fontSize="small" />
+                        <IconButton onClick={deleteSlot} sx={{ padding: 0, alignSelf: 'center' }} aria-label="delete">
+                            <DeleteIcon fontSize="small" />
                         </IconButton>
                     </Tooltip>
                 }
