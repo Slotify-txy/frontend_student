@@ -14,7 +14,7 @@ const statusColor = {
         backgroundColor: blue[200],
         color: blue[700],
     },
-    [SlotStatusConstants.WAITING_FOR_ARRANGING]: {
+    [SlotStatusConstants.ARRANGING]: {
         backgroundColor: yellow[300],
         color: yellow[700],
     }

@@ -12,5 +12,5 @@ export const convertSlots = (data) => {
 }
 
 export const convertStatusToText = (status) => {
-    return status.split('_').map(status => status.toLowerCase()).join(" ")
+    return status.split('_').map(status => status.charAt(0) + status.slice(1).toLowerCase()).join(" ")
 }

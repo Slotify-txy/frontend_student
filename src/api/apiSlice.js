@@ -1,3 +1,4 @@
+import { FormatColorResetSharp } from '@mui/icons-material';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { v4 as uuidv4 } from 'uuid';
 
@@ -15,7 +16,7 @@ export const apiSlice = createApi({
                         start: startAt,
                         end: endAt,
                         status,
-                        isDraggable: true
+                        isDraggable: false
                     }
                 ))
             ),

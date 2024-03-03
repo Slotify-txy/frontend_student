@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import ScheduleCalendar from '../Calendar/ScheduleCalendar'
 import { useCreateSlotsMutation, useDeleteSlotsMutation, useGetSlotsQuery } from '../../api/apiSlice'
 import moment from 'moment'
+import * as SlotStatusConstants from "../../constants/slotStatus"
 
 const timeFormat = "YYYY-MM-DD[T]HH:mm:ss"
 
@@ -26,7 +27,8 @@ const Bar = () => {
                 studentId: 10, coachId: 10, slots: data.map(({ start, end }) => {
                     return {
                         startAt: moment(start).format(timeFormat),
-                        endAt: moment(end).format(timeFormat)
+                        endAt: moment(end).format(timeFormat),
+                        status: SlotStatusConstants.ARRANGING
                     }
                 })
             })
