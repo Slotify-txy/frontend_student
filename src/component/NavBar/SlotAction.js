@@ -1,22 +1,12 @@
-import { Box, Button, Container, Typography } from '@mui/material'
-import React, { useEffect, useState } from 'react'
-import ScheduleCalendar from '../Calendar/ScheduleCalendar'
+import React from 'react'
 import { useCreateSlotsMutation, useDeleteSlotsMutation, useGetSlotsQuery } from '../../api/apiSlice'
+import { Box, Button } from '@mui/material'
 import moment from 'moment'
 import * as SlotStatusConstants from "../../constants/slotStatus"
 
 const timeFormat = "YYYY-MM-DD[T]HH:mm:ss"
 
-export default function Scheduler() {
-    return (
-        <Box sx={{ flex: 1 }}>
-            <Bar />
-            <ScheduleCalendar sx={{ height: '80vh' }} />
-        </Box>
-    )
-}
-
-const Bar = () => {
+export const SlotAction = () => {
     const { data, isFetching, isSuccess, refetch } = useGetSlotsQuery({ studentId: 10, coachId: 10 })
     const [createSlots, { isLoading }] = useCreateSlotsMutation()
     const [deleteSlots] = useDeleteSlotsMutation()
@@ -57,4 +47,3 @@ const Bar = () => {
         </Box>
     )
 }
-

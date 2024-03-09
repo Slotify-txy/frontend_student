@@ -12,6 +12,10 @@ code {
     monospace;
 }
 
+.rbc-calendar {
+  /* height: 200px !important; */
+}
+
 .rbc-events-container {
   /* width: 100% !important; */
 }

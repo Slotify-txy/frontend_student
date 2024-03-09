@@ -17,7 +17,7 @@ const localizer = momentLocalizer(Moment)
 const timeFormat = "YYYY-MM-DD[T]HH:mm:ss"
 const DnDCalendar = withDragAndProp(Calendar)
 
-export default function ScheduleCalendar() {
+export default function ScheduleCalendar({ navBarHeight }) {
     const { data, isFetching, isSuccess } = useGetSlotsQuery({ studentId: 10, coachId: 10 })
     const dispatch = useDispatch()
     const onChangeSlotTime = useCallback(
@@ -80,7 +80,7 @@ export default function ScheduleCalendar() {
         return <Box>Loading...</Box>
     }
     return (
-        <div style={{}}>
+        <Box style={{ height: `calc(100% - ${navBarHeight}px)` }}>
             <DnDCalendar
                 localizer={localizer}
                 events={convertSlots(data)}
@@ -113,7 +113,7 @@ export default function ScheduleCalendar() {
                     // tooltipAccessor: TooltipAccessor
                 }}
             />
-        </div>
+        </Box>
     )
 }
 
