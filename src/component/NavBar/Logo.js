@@ -4,7 +4,7 @@ import React from 'react'
 
 const Logo = () => {
     return (
-        <Typography sx={{ fontFamily: "Architects Daughter", fontWeight: 300, fontSize: 30, color: blue[200], marginRight: 10 }}>
+        <Typography sx={{ fontFamily: "\"Pacifico\", cursive", fontWeight: 300, fontSize: 30, fontStyle: 'normal', marginRight: 10 }}>
             Simply Schedule
         </Typography>
     )
