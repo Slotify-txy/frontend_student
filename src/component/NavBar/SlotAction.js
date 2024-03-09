@@ -1,15 +1,16 @@
 import React from 'react'
 import { useCreateSlotsMutation, useDeleteSlotsMutation, useGetSlotsQuery } from '../../api/apiSlice'
-import { Box, Button } from '@mui/material'
+import LoadingButton from '@mui/lab/LoadingButton'
+import { Box, Button, ButtonGroup } from '@mui/material'
 import moment from 'moment'
 import * as SlotStatusConstants from "../../constants/slotStatus"
 
 const timeFormat = "YYYY-MM-DD[T]HH:mm:ss"
 
 export const SlotAction = () => {
-    const { data, isFetching, isSuccess, refetch } = useGetSlotsQuery({ studentId: 10, coachId: 10 })
-    const [createSlots, { isLoading }] = useCreateSlotsMutation()
-    const [deleteSlots] = useDeleteSlotsMutation()
+    const { data } = useGetSlotsQuery({ studentId: 10, coachId: 10 })
+    const [createSlots, { isLoading: isCreatingSlots }] = useCreateSlotsMutation()
+    const [deleteSlots, { isLoading: isDeletingSlots }] = useDeleteSlotsMutation()
 
     const schedule = async () => {
         try {
@@ -36,14 +37,10 @@ export const SlotAction = () => {
         }
     }
 
-    if (isFetching) {
-        return <Box>Loading...</Box>
-    }
-
     return (
-        <Box sx={{ backgroundColor: '#cfe8fc' }}>
-            <Button variant="outlined" onClick={schedule}>Schedule</Button>
-            <Button variant="outlined" onClick={clearSlots}>Clear Slot</Button>
-        </Box>
+        <ButtonGroup variant="outlined" >
+            <LoadingButton onClick={schedule} loading={isCreatingSlots}>Schedule</LoadingButton>
+            <LoadingButton onClick={clearSlots} loading={isDeletingSlots}>Clear</LoadingButton>
+        </ButtonGroup>
     )
 }
