@@ -5,18 +5,18 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch } from 'react-redux';
 import { apiSlice as api, useGetSlotsQuery } from '../../api/apiSlice'
-import { blue, yellow } from '@mui/material/colors';
+import { blue, orange } from '@mui/material/colors';
 import * as SlotStatusConstants from "../../constants/slotStatus"
 import { convertStatusToText } from '../../util/slotUtil';
 
 const statusColor = {
     [SlotStatusConstants.AVAILABLE]: {
-        backgroundColor: blue[200],
-        color: blue[700],
+        backgroundColor: blue[400],
+        color: blue[900],
     },
     [SlotStatusConstants.ARRANGING]: {
-        backgroundColor: yellow[300],
-        color: yellow[700],
+        backgroundColor: orange[400],
+        color: orange[900],
     }
 }
 

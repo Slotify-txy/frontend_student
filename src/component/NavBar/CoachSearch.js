@@ -91,7 +91,7 @@ export const CoachSearch = ({ setIsSearchingCoach }) => {
                                 ...params.InputProps,
                                 type: 'search',
                             }}
-                            placeholder='Switch Coach'
+                            placeholder='Search Coach'
                         />
                     }
                 />
