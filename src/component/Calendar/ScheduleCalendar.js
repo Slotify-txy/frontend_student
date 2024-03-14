@@ -45,6 +45,7 @@ export default function ScheduleCalendar({ navBarHeight }) {
     const onChangeSlotTime = useCallback(
         (start, end, id) => {
             if (isOverlapped(slots, start, end, id) || !isAvailable(combinedOpenHours, start, end)) {
+                // todo: notifications
                 return
             }
             dispatch(
@@ -63,6 +64,7 @@ export default function ScheduleCalendar({ navBarHeight }) {
     const onSelect = useCallback(
         (start, end) => {
             if (isOverlapped(slots, start, end) || !isAvailable(combinedOpenHours, start, end)) {
+                // todo: notifications
                 return
             }
             dispatch(
