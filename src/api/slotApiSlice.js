@@ -1,10 +1,10 @@
 import { FormatColorResetSharp } from '@mui/icons-material';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { v4 as uuidv4 } from 'uuid';
+import { api } from "./api"
 
-export const apiSlice = createApi({
-    reducerPath: 'api',
-    baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:8080/api/v1' }),
+export const slotApiSlice = api.injectEndpoints({
+    reducerPath: 'slotApi',
     tagTypes: ['Slot', 'Appointment'],
     endpoints: (builder) => ({
         getSlots: builder.query({
@@ -40,4 +40,4 @@ export const apiSlice = createApi({
     }),
 })
 
-export const { useGetSlotsQuery, useCreateSlotsMutation, useDeleteSlotsMutation } = apiSlice
+export const { useGetSlotsQuery, useCreateSlotsMutation, useDeleteSlotsMutation } = slotApiSlice

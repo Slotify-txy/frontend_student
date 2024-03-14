@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch } from 'react-redux';
-import { apiSlice as api, useGetSlotsQuery } from '../../api/apiSlice'
+import { slotApiSlice as slotApi, useGetSlotsQuery } from '../../api/slotApiSlice'
 import { blue, orange } from '@mui/material/colors';
 import * as SlotStatusConstants from "../../constants/slotStatus"
 import { convertStatusToText } from '../../util/slotUtil';
@@ -32,7 +32,7 @@ const CustomEventComponent = ({ event }) => {
     const deleteSlot = useCallback(() => {
         isSuccess &&
             dispatch(
-                api.util.upsertQueryData('getSlots', { studentId: 10, coachId: 10 }, data.filter(slot => slot.id !== event.id))
+                slotApi.util.upsertQueryData('getSlots', { studentId: 10, coachId: 10 }, data.filter(slot => slot.id !== event.id))
             )
     }, [data, isSuccess])
 

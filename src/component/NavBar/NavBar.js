@@ -1,6 +1,6 @@
 import { Box, Divider } from '@mui/material'
 import React from 'react'
-import { useCreateSlotsMutation, useGetSlotsQuery } from '../../api/apiSlice'
+import { useCreateSlotsMutation, useGetSlotsQuery } from '../../api/slotApiSlice'
 import { SlotAction } from './SlotAction'
 import Logo from './Logo'
 import { Profile } from './Profile'

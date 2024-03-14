@@ -1,5 +1,5 @@
 import React from 'react'
-import { useCreateSlotsMutation, useDeleteSlotsMutation, useGetSlotsQuery } from '../../api/apiSlice'
+import { useCreateSlotsMutation, useDeleteSlotsMutation, useGetSlotsQuery } from '../../api/slotApiSlice'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { Box, Button, ButtonGroup } from '@mui/material'
 import moment from 'moment'
