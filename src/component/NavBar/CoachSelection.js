@@ -11,17 +11,16 @@ const CoachSelection = () => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
             <Typography>Coach</Typography>
-            <IconButton>
+            <IconButton onClick={() => console.log('profile')}>
                 <Avatar
                     sx={{ bgcolor: blue[300], width: size, height: size }}
                     alt="Xiyuan"
                     src="/broken-image.jpg"
-                    onClick={() => console.log('profile')}
                 />
             </IconButton>
             {
-                isSearchingCoach ? <CoachSearch setIsSearchingCoach={setIsSearchingCoach} /> : <IconButton>
-                    <CachedIcon onClick={() => setIsSearchingCoach(true)} />
+                isSearchingCoach ? <CoachSearch setIsSearchingCoach={setIsSearchingCoach} /> : <IconButton onClick={() => setIsSearchingCoach(true)} >
+                    <CachedIcon />
                 </IconButton>
             }
 
