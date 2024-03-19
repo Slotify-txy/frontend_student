@@ -19,7 +19,7 @@ export const SlotAction = () => {
                     return {
                         startAt: moment(start).format(timeFormat),
                         endAt: moment(end).format(timeFormat),
-                        status: SlotStatusConstants.ARRANGING
+                        status: SlotStatusConstants.SCHEDULING
                     }
                 })
             })

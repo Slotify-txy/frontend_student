@@ -1,2 +1,2 @@
 export const AVAILABLE = 'AVAILABLE';
-export const ARRANGING = 'ARRANGING';
+export const SCHEDULING = 'SCHEDULING';
