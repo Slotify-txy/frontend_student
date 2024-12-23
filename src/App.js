@@ -1,12 +1,11 @@
-import logo from './logo.svg';
-import './App.css';
-import ScheduleCalendar from './component/Calendar/ScheduleCalendar';
 import { Box } from '@mui/material';
-import { NavBar } from './component/NavBar/NavBar';
+import React from 'react';
+import './App.css';
+import { NavBar } from './components/NavBar/NavBar';
+import ScheduleCalendar from './features/Calendar/ScheduleCalendar';
 
 function App() {
-
-  const navBarHeight = 70
+  const navBarHeight = 70;
 
   return (
     <Box sx={{ height: '100vh' }}>
@@ -15,7 +14,6 @@ function App() {
       </Box>
       <ScheduleCalendar navBarHeight={navBarHeight} />
     </Box>
-
   );
 }
 

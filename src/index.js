@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import "react-big-calendar/lib/css/react-big-calendar.css"
-import { store } from './store'
-import { Provider } from 'react-redux'
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { store } from './app/store';
+import { Provider } from 'react-redux';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
