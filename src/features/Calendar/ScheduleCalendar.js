@@ -74,18 +74,16 @@ export default function ScheduleCalendar({ navBarHeight }) {
         return;
       }
       dispatch(
-        slotApi.util.upsertQueryData(
+        slotApi.util.updateQueryData(
           'getSlots',
           { studentId: 10, coachId: 10 },
-          slots.map((slot) =>
-            slot.id === id
-              ? {
-                  ...slot,
-                  start: moment(start).format(timeFormat),
-                  end: moment(end).format(timeFormat),
-                }
-              : slot
-          )
+          (slots) => {
+            let slot = slots.find((slot) => slot.id === id);
+            if (slot) {
+              slot.start = moment(start).format(timeFormat);
+              slot.end = moment(end).format(timeFormat);
+            }
+          }
         )
       );
     },
@@ -102,19 +100,18 @@ export default function ScheduleCalendar({ navBarHeight }) {
         return;
       }
       dispatch(
-        slotApi.util.upsertQueryData(
+        slotApi.util.updateQueryData(
           'getSlots',
           { studentId: 10, coachId: 10 },
-          [
-            ...slots,
-            {
+          (slots) => {
+            slots.push({
               id: uuidv4(),
               start: moment(start).format(timeFormat),
               end: moment(end).format(timeFormat),
               status: SlotStatusConstants.AVAILABLE,
               isDraggable: true,
-            },
-          ]
+            });
+          }
         )
       );
     },

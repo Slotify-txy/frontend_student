@@ -33,10 +33,15 @@ const CustomEventComponent = ({ event }) => {
   const deleteSlot = useCallback(() => {
     isSuccess &&
       dispatch(
-        slotApi.util.upsertQueryData(
+        slotApi.util.updateQueryData(
           'getSlots',
           { studentId: 10, coachId: 10 },
-          data.filter((slot) => slot.id !== event.id)
+          (slots) => {
+            const index = slots.findIndex((slot) => slot.id === event.id);
+            if (index !== -1) {
+              slots.splice(index, 1);
+            }
+          }
         )
       );
   }, [data, isSuccess]);
