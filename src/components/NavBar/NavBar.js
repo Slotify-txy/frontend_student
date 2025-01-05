@@ -4,7 +4,6 @@ import CoachSelection from './CoachSelection';
 import Logo from './Logo';
 import LogOut from './LogOut';
 import { Profile } from './Profile';
-import { SlotAction } from './SlotAction';
 
 export const NavBar = () => {
   return (
@@ -21,7 +20,6 @@ export const NavBar = () => {
       >
         <Logo />
         <CoachSelection />
-        <SlotAction />
         <Box
           sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
         >

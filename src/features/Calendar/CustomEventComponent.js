@@ -8,8 +8,8 @@ import {
   slotApiSlice as slotApi,
   useGetSlotsQuery,
 } from '../../app/services/slotApiSlice';
-import * as SlotStatusConstants from '../../constants/slotStatus';
-import { convertStatusToText } from '../../util/slotUtil';
+import * as SlotStatusConstants from '../../common/constants/slotStatus';
+import { convertStatusToText } from '../../common/util/slotUtil';
 
 const statusColor = {
   [SlotStatusConstants.AVAILABLE]: {
@@ -22,29 +22,15 @@ const statusColor = {
   },
 };
 
-const CustomEventComponent = ({ event }) => {
-  const { data, isSuccess } = useGetSlotsQuery({ studentId: 10, coachId: 10 });
+const CustomEventComponent = ({ event, setAvailableSlots }) => {
   const start = moment(event.start).format('hh:mm A');
   const end = moment(event.end).format('hh:mm A');
   const status = event.status;
   const [onHover, setOnHover] = useState(false);
-  const dispatch = useDispatch();
 
   const deleteSlot = useCallback(() => {
-    isSuccess &&
-      dispatch(
-        slotApi.util.updateQueryData(
-          'getSlots',
-          { studentId: 10, coachId: 10 },
-          (slots) => {
-            const index = slots.findIndex((slot) => slot.id === event.id);
-            if (index !== -1) {
-              slots.splice(index, 1);
-            }
-          }
-        )
-      );
-  }, [data, isSuccess]);
+    setAvailableSlots((prev) => prev.filter((slot) => slot.id !== event.id));
+  }, []);
 
   return (
     <Box

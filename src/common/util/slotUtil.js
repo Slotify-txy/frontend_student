@@ -4,7 +4,6 @@ import { extendMoment } from 'moment-range';
 const moment = extendMoment(Moment);
 
 export const convertSlots = (data) => {
-  console.log(data);
   return data.map((slot) => {
     const { start, end } = slot;
     return {

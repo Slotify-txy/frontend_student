@@ -1,37 +1,48 @@
 import { Box } from '@mui/material';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndProp from 'react-big-calendar/lib/addons/dragAndDrop';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { useGetOpenHoursQuery } from '../../app/services/openHourApiSlice';
-import {
-  slotApiSlice as slotApi,
-  useGetSlotsQuery,
-} from '../../app/services/slotApiSlice';
-import * as SlotStatusConstants from '../../constants/slotStatus';
+import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
+import * as SlotStatusConstants from '../../common/constants/slotStatus';
 import {
   convertSlots,
   isAvailable,
   isOpenHour,
   isOverlapped,
-} from '../../util/slotUtil';
+} from '../../common/util/slotUtil';
 import CustomEventComponent from './CustomEventComponent';
+import { selectCombinedOpenHours } from './openHourSlice';
 
 const moment = extendMoment(Moment);
 const localizer = momentLocalizer(Moment);
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 const DnDCalendar = withDragAndProp(Calendar);
 
-export default function ScheduleCalendar({ navBarHeight }) {
+export default function ScheduleCalendar({
+  navBarHeight,
+  availableSlots,
+  setAvailableSlots,
+}) {
   const {
     data: slots,
     isFetching,
     isSuccess,
-  } = useGetSlotsQuery({ studentId: 10, coachId: 10 });
+  } = useGetSlotsQuery(
+    { studentId: 10, coachId: 10 },
+    {
+      selectFromResult: (result) => {
+        result.data = convertSlots(result.data ?? []);
+        return result;
+      },
+    }
+  );
+
   const {
     data: openHours,
     isFetching: isFetchingOpenHours,
@@ -41,97 +52,65 @@ export default function ScheduleCalendar({ navBarHeight }) {
   useEffect(() => {
     console.log('slots', slots);
   }, [slots]);
-
-  const combinedOpenHours = useMemo(() => {
-    if (isOpenHoursSuccess) {
-      const copy = [];
-      openHours.forEach((openHour) => copy.push(openHour));
-      copy.sort((a, b) => moment(a.start) - moment(b.start));
-      const ranges = copy.map((openHour) =>
-        moment.range(moment(openHour.start), moment(openHour.end))
-      );
-      const ret = [];
-      for (let i = 0; i < ranges.length; i++) {
-        let range = ranges[i];
-        while (i + 1 < ranges.length && range.adjacent(ranges[i + 1])) {
-          range = range.add(ranges[i + 1], { adjacent: true });
-          i += 1;
-        }
-        ret.push(range);
-      }
-      return ret;
-    }
-  }, [openHours, isOpenHoursSuccess]);
+  useEffect(() => {
+    console.log('availableSlots', availableSlots);
+  }, [availableSlots]);
+  const combinedOpenHours = useSelector(selectCombinedOpenHours);
 
   const dispatch = useDispatch();
   const onChangeSlotTime = useCallback(
     (start, end, id) => {
       if (
-        isOverlapped(slots, start, end, id) ||
+        isOverlapped([...slots, ...availableSlots], start, end, id) ||
         !isAvailable(combinedOpenHours, start, end)
       ) {
         // todo: notifications
         return;
       }
-      dispatch(
-        slotApi.util.updateQueryData(
-          'getSlots',
-          { studentId: 10, coachId: 10 },
-          (slots) => {
-            let slot = slots.find((slot) => slot.id === id);
-            if (slot) {
-              slot.start = moment(start).format(timeFormat);
-              slot.end = moment(end).format(timeFormat);
-            }
-          }
-        )
-      );
+
+      setAvailableSlots((prev) => {
+        let slot = prev.find((slot) => slot.id === id);
+        slot.start = start;
+        slot.end = end;
+        return prev;
+      });
     },
-    [slots]
+    [slots, availableSlots]
   );
 
   const onSelect = useCallback(
     (start, end) => {
       if (
-        isOverlapped(slots, start, end) ||
-        !isAvailable(combinedOpenHours, start, end)
+        !isAvailable(combinedOpenHours, start, end) ||
+        isOverlapped([...slots, ...availableSlots], start, end)
       ) {
         // todo: notifications
         return;
       }
-      dispatch(
-        slotApi.util.updateQueryData(
-          'getSlots',
-          { studentId: 10, coachId: 10 },
-          (slots) => {
-            slots.push({
-              id: uuidv4(),
-              start: moment(start).format(timeFormat),
-              end: moment(end).format(timeFormat),
-              status: SlotStatusConstants.AVAILABLE,
-              isDraggable: true,
-            });
-          }
-        )
-      );
+      setAvailableSlots((prev) => [
+        ...prev,
+        {
+          id: uuidv4(),
+          start: start,
+          end: end,
+          status: SlotStatusConstants.AVAILABLE,
+          isDraggable: true,
+        },
+      ]);
     },
-    [slots, combinedOpenHours]
+    [slots, combinedOpenHours, availableSlots]
   );
 
   const slotPropGetter = useCallback(
-    (date) => {
-      if (isOpenHoursSuccess) {
-        return {
-          ...(!isOpenHour(openHours, moment(date)) && {
-            style: {
-              backgroundColor: 'rgba(0, 0, 0, 0.03)',
-              borderTop: 'none',
-            },
-          }),
-        };
-      }
-    },
-    [openHours, isOpenHoursSuccess]
+    (date) => ({
+      ...(!isOpenHour(openHours, moment(date)) && {
+        style: {
+          backgroundColor: 'rgba(0, 0, 0, 0.03)',
+          borderTop: 'none',
+        },
+      }),
+    }),
+    [openHours]
   );
 
   if (isFetching) {
@@ -142,9 +121,7 @@ export default function ScheduleCalendar({ navBarHeight }) {
     <Box style={{ height: `calc(100% - ${navBarHeight}px)` }}>
       <DnDCalendar
         localizer={localizer}
-        events={convertSlots(slots)}
-        // timeslots={30}
-        // step={1}
+        events={[...availableSlots, ...slots]}
         draggableAccessor={'isDraggable'}
         views={['month', 'week']}
         defaultView="week"
@@ -167,10 +144,12 @@ export default function ScheduleCalendar({ navBarHeight }) {
         // }}
         slotPropGetter={slotPropGetter}
         components={{
-          event: CustomEventComponent,
-          // eventWrapper: CustomEventWrapper,
-          // eventContainerWrapper: MyEventContainerWrapper
-          // tooltipAccessor: TooltipAccessor
+          event: (props) => (
+            <CustomEventComponent
+              setAvailableSlots={setAvailableSlots}
+              {...props}
+            />
+          ),
         }}
       />
     </Box>

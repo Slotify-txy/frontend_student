@@ -1,5 +1,9 @@
+import Moment from 'moment';
+import { extendMoment } from 'moment-range';
 import { v4 as uuidv4 } from 'uuid';
 import { api } from './api';
+
+const moment = extendMoment(Moment);
 
 export const slotApiSlice = api.injectEndpoints({
   reducerPath: 'slotsApi',
@@ -10,7 +14,7 @@ export const slotApiSlice = api.injectEndpoints({
       transformResponse: (response) =>
         response.map(({ startAt, endAt, status }) => ({
           id: uuidv4(),
-          start: startAt,
+          start: startAt, // can't do `moment(startAt).toDate(),` because redux doesn't store date object
           end: endAt,
           status,
           isDraggable: false,

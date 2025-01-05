@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import React from 'react';
 import './App.css';
 import { NavBar } from './components/NavBar/NavBar';
-import ScheduleCalendar from './features/Calendar/ScheduleCalendar';
+import SchedulePage from './features/Calendar/SchedulePage';
 
 function App() {
   const navBarHeight = 70;
@@ -12,7 +12,7 @@ function App() {
       <Box sx={{ height: navBarHeight }}>
         <NavBar />
       </Box>
-      <ScheduleCalendar navBarHeight={navBarHeight} />
+      <SchedulePage navBarHeight={navBarHeight} />
     </Box>
   );
 }
