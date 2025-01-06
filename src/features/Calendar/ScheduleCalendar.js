@@ -102,15 +102,19 @@ export default function ScheduleCalendar({
   );
 
   const slotPropGetter = useCallback(
-    (date) => ({
-      ...(!isOpenHour(openHours, moment(date)) && {
-        style: {
-          backgroundColor: 'rgba(0, 0, 0, 0.03)',
-          borderTop: 'none',
-        },
-      }),
-    }),
-    [openHours]
+    (date) => {
+      if (isOpenHoursSuccess) {
+        return {
+          ...(!isOpenHour(openHours, moment(date)) && {
+            style: {
+              backgroundColor: 'rgba(0, 0, 0, 0.03)',
+              borderTop: 'none',
+            },
+          }),
+        };
+      }
+    },
+    [openHours, isOpenHoursSuccess]
   );
 
   if (isFetching) {

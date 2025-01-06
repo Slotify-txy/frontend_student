@@ -3,7 +3,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { Box, IconButton, Tooltip } from '@mui/material';
 import { green, grey } from '@mui/material/colors';
 import moment from 'moment-timezone';
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   useCreateSlotsMutation,
   useDeleteSlotsMutation,
@@ -19,31 +19,28 @@ export const ActionBar = ({ availableSlots, setAvailableSlots }) => {
   const [deleteSlots, { isLoading: isDeletingSlots }] =
     useDeleteSlotsMutation();
 
-  const schedule = async () => {
+  const schedule = useCallback(async () => {
     try {
       await createSlots({
         studentId: 10,
         coachId: 10,
-        slots: availableSlots.map(({ start, end }) => {
-          if (start <= Date.now()) {
-            return;
-          }
-          return {
+        slots: availableSlots
+          .filter(({ start }) => start > Date.now())
+          .map(({ start, end }) => ({
             startAt: moment(start).format(timeFormat),
             endAt: moment(end).format(timeFormat),
             status: SlotStatusConstants.SCHEDULING,
-          };
-        }),
+          })),
       }).unwrap();
       setAvailableSlots([]);
     } catch (error) {
       console.log('error', error);
     }
-  };
+  }, [availableSlots]);
 
-  const clearSlots = () => {
+  const clearSlots = useCallback(() => {
     setAvailableSlots([]);
-  };
+  }, []);
 
   return (
     <Box sx={{ pt: 2 }}>

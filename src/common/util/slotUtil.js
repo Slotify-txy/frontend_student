@@ -38,6 +38,10 @@ export const isAvailable = (combinedOpenHours, start, end) => {
   });
 };
 
+/**
+ *
+ * @param {*} id `undefined` when selecting slots to form an event
+ */
 // check if the slot will overlaps with existing slots
 export const isOverlapped = (slots, start, end, id = undefined) => {
   return slots.some((slot) => {

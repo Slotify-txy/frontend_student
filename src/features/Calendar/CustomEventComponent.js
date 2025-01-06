@@ -29,8 +29,11 @@ const CustomEventComponent = ({ event, setAvailableSlots }) => {
   const [onHover, setOnHover] = useState(false);
 
   const deleteSlot = useCallback(() => {
+    if (event.status !== SlotStatusConstants.AVAILABLE) {
+      return;
+    }
     setAvailableSlots((prev) => prev.filter((slot) => slot.id !== event.id));
-  }, []);
+  }, [event]);
 
   return (
     <Box
@@ -69,6 +72,7 @@ const CustomEventComponent = ({ event, setAvailableSlots }) => {
             <Tooltip title="Delete">
               <IconButton
                 onClick={deleteSlot}
+                onMouseDown={(e) => e.stopPropagation()} // otherwise, it triggers with onDragStart
                 sx={{ padding: 0, alignSelf: 'center' }}
                 aria-label="delete"
               >
