@@ -1,5 +1,6 @@
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
+import * as SlotStatusConstants from '../../common/constants/slotStatus';
 
 const moment = extendMoment(Moment);
 
@@ -52,4 +53,19 @@ export const isOverlapped = (slots, start, end, id = undefined) => {
     const range2 = moment.range(moment(slot.start), moment(slot.end));
     return range1.overlaps(range2);
   });
+};
+
+export const getStatusColor = (status) => {
+  switch (status) {
+    case SlotStatusConstants.AVAILABLE:
+      return '#039BE5';
+    case SlotStatusConstants.SCHEDULING:
+      return '#f6bf26';
+    case SlotStatusConstants.PUBLISHED:
+      return '#33b679';
+    case SlotStatusConstants.PLANNING:
+      return '#7986cb';
+    default:
+      return '';
+  }
 };

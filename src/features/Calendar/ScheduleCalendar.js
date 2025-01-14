@@ -1,7 +1,7 @@
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndProp from 'react-big-calendar/lib/addons/dragAndDrop';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
@@ -18,6 +18,7 @@ import {
 } from '../../common/util/slotUtil';
 import CustomEventComponent from './CustomEventComponent';
 import { selectCombinedOpenHours } from './openHourSlice';
+import StyledCalendar from '../../components/StyledCalendar';
 
 const moment = extendMoment(Moment);
 const localizer = momentLocalizer(Moment);
@@ -25,9 +26,13 @@ const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 const DnDCalendar = withDragAndProp(Calendar);
 
 export default function ScheduleCalendar({
-  navBarHeight,
   availableSlots,
   setAvailableSlots,
+  setCalendarRange,
+  calendarView,
+  setCalendarView,
+  calendarDate,
+  setCalendarDate,
 }) {
   const {
     data: slots,
@@ -57,7 +62,6 @@ export default function ScheduleCalendar({
   }, [availableSlots]);
   const combinedOpenHours = useSelector(selectCombinedOpenHours);
 
-  const dispatch = useDispatch();
   const onChangeSlotTime = useCallback(
     (start, end, id) => {
       if (
@@ -122,14 +126,11 @@ export default function ScheduleCalendar({
   }
 
   return (
-    <Box style={{ height: `calc(100% - ${navBarHeight}px)` }}>
-      <DnDCalendar
-        localizer={localizer}
+    <Box style={{ height: '100%' }}>
+      <StyledCalendar
         events={[...availableSlots, ...slots]}
-        draggableAccessor={'isDraggable'}
-        views={['month', 'week']}
-        defaultView="week"
-        // drilldownView="week"
+        date={calendarDate}
+        view={calendarView}
         onEventDrop={({ start, end, event }) => {
           if (start.getDay() === end.getDay()) {
             onChangeSlotTime(start, end, event.id);
@@ -138,23 +139,16 @@ export default function ScheduleCalendar({
         onEventResize={({ start, end, event }) => {
           onChangeSlotTime(start, end, event.id);
         }}
-        selectable={'true'}
         onSelectSlot={({ start, end }) => {
           onSelect(start, end);
         }}
-        // eventPropGetter={(event) => {
-        //     const backgroundColor = 'yellow';
-        //     return { style: { backgroundColor } }
-        // }}
         slotPropGetter={slotPropGetter}
-        components={{
-          event: (props) => (
-            <CustomEventComponent
-              setAvailableSlots={setAvailableSlots}
-              {...props}
-            />
-          ),
-        }}
+        createCustomEventComponent={(props) => (
+          <CustomEventComponent
+            setAvailableSlots={setAvailableSlots}
+            {...props}
+          />
+        )}
       />
     </Box>
   );

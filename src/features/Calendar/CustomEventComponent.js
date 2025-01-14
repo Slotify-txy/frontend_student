@@ -1,32 +1,19 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, IconButton, Tooltip, Typography } from '@mui/material';
-import { blue, orange } from '@mui/material/colors';
 import moment from 'moment-timezone';
 import React, { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import {
-  slotApiSlice as slotApi,
-  useGetSlotsQuery,
-} from '../../app/services/slotApiSlice';
 import * as SlotStatusConstants from '../../common/constants/slotStatus';
-import { convertStatusToText } from '../../common/util/slotUtil';
-
-const statusColor = {
-  [SlotStatusConstants.AVAILABLE]: {
-    backgroundColor: blue[400],
-    color: blue[900],
-  },
-  [SlotStatusConstants.SCHEDULING]: {
-    backgroundColor: orange[400],
-    color: orange[900],
-  },
-};
+import {
+  convertStatusToText,
+  getStatusColor,
+} from '../../common/util/slotUtil';
 
 const CustomEventComponent = ({ event, setAvailableSlots }) => {
   const start = moment(event.start).format('hh:mm A');
   const end = moment(event.end).format('hh:mm A');
   const status = event.status;
   const [onHover, setOnHover] = useState(false);
+  const backgroundColor = getStatusColor(status);
 
   const deleteSlot = useCallback(() => {
     if (event.status !== SlotStatusConstants.AVAILABLE) {
@@ -41,7 +28,7 @@ const CustomEventComponent = ({ event, setAvailableSlots }) => {
         height: '100%',
         paddingX: '0.3rem',
         overflow: 'hidden',
-        backgroundColor: statusColor[status].backgroundColor,
+        backgroundColor: backgroundColor,
         borderRadius: 2,
       }}
       onMouseEnter={() => setOnHover(true)}
@@ -61,7 +48,6 @@ const CustomEventComponent = ({ event, setAvailableSlots }) => {
             fontSize: 15,
             fontWeight: 700,
             alignSelf: 'center',
-            color: statusColor[status].color,
           }}
         >
           {convertStatusToText(status)}

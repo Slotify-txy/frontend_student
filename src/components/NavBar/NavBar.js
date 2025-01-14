@@ -1,34 +1,52 @@
-import { Box, Divider } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import React from 'react';
 import CoachSelection from './CoachSelection';
 import Logo from './Logo';
 import LogOut from './LogOut';
 import { Profile } from './Profile';
+import CalendarControl from './CalendarControl';
 
-export const NavBar = () => {
+export const NavBar = ({
+  calendarView,
+  setCalendarView,
+  calendarRange,
+  setCalendarDate,
+  tab,
+  setTab,
+}) => {
   return (
     <Box sx={{ height: '100%' }}>
-      <Box
+      <Stack
         sx={{
           height: '100%',
-          display: 'flex',
           flexDirection: 'row',
+          px: 4,
           alignItems: 'center',
-          paddingX: 10,
-          justifyContent: 'space-between',
         }}
       >
-        <Logo />
-        <CoachSelection />
-        <Box
-          sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+        <Box mr={5}>
+          <Logo />
+        </Box>
+        <Box flex={1} mr={5}>
+          <CalendarControl
+            calendarView={calendarView}
+            setCalendarView={setCalendarView}
+            calendarRange={calendarRange}
+            setCalendarDate={setCalendarDate}
+            tab={tab}
+            setTab={setTab}
+          />
+        </Box>
+        <Stack
+          sx={{
+            ml: 'auto',
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
         >
           <Profile />
-          <LogOut />
-        </Box>
-      </Box>
-
-      <Divider />
+        </Stack>
+      </Stack>
     </Box>
   );
 };

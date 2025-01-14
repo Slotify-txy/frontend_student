@@ -7,7 +7,14 @@ import ScheduleCalendar from './ScheduleCalendar';
 
 const moment = extendMoment(Moment);
 
-const SchedulePage = ({ navBarHeight }) => {
+const SchedulePage = ({
+  navBarHeight,
+  setCalendarRange,
+  calendarView,
+  setCalendarView,
+  calendarDate,
+  setCalendarDate,
+}) => {
   const [availableSlots, setAvailableSlots] = useState([]);
 
   return (
@@ -18,14 +25,17 @@ const SchedulePage = ({ navBarHeight }) => {
         height: `calc(100% - ${navBarHeight}px)`,
       }}
     >
-      <Box sx={{ flex: 1 }}>
+      <Box sx={{ flex: 1, ml: 1 }}>
         <ScheduleCalendar
-          height={'100%'}
           availableSlots={availableSlots}
           setAvailableSlots={setAvailableSlots}
+          calendarView={calendarView}
+          setCalendarView={setCalendarView}
+          setCalendarRange={setCalendarRange}
+          calendarDate={calendarDate}
+          setCalendarDate={setCalendarDate}
         />
       </Box>
-      <Divider orientation="vertical" sx={{ ml: 1 }} />
       <Box sx={{ height: '100%', width: 70 }}>
         <ActionBar
           availableSlots={availableSlots}
