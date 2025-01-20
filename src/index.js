@@ -7,6 +7,8 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { store } from './app/store';
 import { Provider } from 'react-redux';
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { BrowserRouter, Route, Routes } from 'react-router';
 
 const theme = createTheme({
   typography: {
@@ -28,13 +30,19 @@ const theme = createTheme({
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <ThemeProvider theme={theme}>
-    <React.StrictMode>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </React.StrictMode>
-  </ThemeProvider>
+  <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+    <ThemeProvider theme={theme}>
+      <React.StrictMode>
+        <Provider store={store}>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<App />} />
+            </Routes>
+          </BrowserRouter>
+        </Provider>
+      </React.StrictMode>
+    </ThemeProvider>
+  </GoogleOAuthProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

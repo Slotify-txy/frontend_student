@@ -19,6 +19,7 @@ import {
 import CustomEventComponent from './CustomEventComponent';
 import { selectCombinedOpenHours } from './openHourSlice';
 import StyledCalendar from '../../components/StyledCalendar';
+import * as AuthStatus from '../../common/constants/authStatus';
 
 const moment = extendMoment(Moment);
 const localizer = momentLocalizer(Moment);
@@ -34,6 +35,8 @@ export default function ScheduleCalendar({
   calendarDate,
   setCalendarDate,
 }) {
+  const { status } = useSelector((state) => state.auth);
+
   const {
     data: slots,
     isFetching,
@@ -45,6 +48,7 @@ export default function ScheduleCalendar({
         result.data = convertSlots(result.data ?? []);
         return result;
       },
+      skip: status != AuthStatus.AUTHENTICATED,
     }
   );
 
@@ -52,7 +56,10 @@ export default function ScheduleCalendar({
     data: openHours,
     isFetching: isFetchingOpenHours,
     isSuccess: isOpenHoursSuccess,
-  } = useGetOpenHoursQuery({ coachId: 10 });
+  } = useGetOpenHoursQuery(
+    { coachId: 10 },
+    { skip: status != AuthStatus.AUTHENTICATED }
+  );
 
   useEffect(() => {
     console.log('slots', slots);
