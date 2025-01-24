@@ -35,7 +35,15 @@ function App() {
   return (
     <Fragment>
       <Box sx={{ height: '100vh', bgcolor: '#f8fafe' }}>
-        <Box sx={{ height: height, py: `${py}px` }}>
+        <Box
+          sx={{
+            height: height,
+            py: `${py}px`,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}
+        >
           <NavBar
             calendarView={calendarView}
             setCalendarView={setCalendarView}

@@ -11,13 +11,13 @@ import { useGetOpenHoursQuery } from '../../app/services/openHourApiSlice';
 import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
 import * as SlotStatusConstants from '../../common/constants/slotStatus';
 import {
+  combineOpenHours,
   convertSlots,
   isAvailable,
   isOpenHour,
   isOverlapped,
 } from '../../common/util/slotUtil';
 import CustomEventComponent from './CustomEventComponent';
-import { selectCombinedOpenHours } from './openHourSlice';
 import StyledCalendar from '../../components/StyledCalendar';
 import * as AuthStatus from '../../common/constants/authStatus';
 
@@ -35,20 +35,20 @@ export default function ScheduleCalendar({
   calendarDate,
   setCalendarDate,
 }) {
-  const { status } = useSelector((state) => state.auth);
+  const { user, status } = useSelector((state) => state.auth);
 
   const {
     data: slots,
     isFetching,
     isSuccess,
   } = useGetSlotsQuery(
-    { studentId: 10, coachId: 10 },
+    { studentId: user?.id, coachId: user?.coach },
     {
       selectFromResult: (result) => {
         result.data = convertSlots(result.data ?? []);
         return result;
       },
-      skip: status != AuthStatus.AUTHENTICATED,
+      skip: status != AuthStatus.AUTHENTICATED || user == null,
     }
   );
 
@@ -57,8 +57,13 @@ export default function ScheduleCalendar({
     isFetching: isFetchingOpenHours,
     isSuccess: isOpenHoursSuccess,
   } = useGetOpenHoursQuery(
-    { coachId: 10 },
-    { skip: status != AuthStatus.AUTHENTICATED }
+    { coachId: user?.coach },
+    { skip: status != AuthStatus.AUTHENTICATED || user == null }
+  );
+
+  const combinedOpenHours = useMemo(
+    () => combineOpenHours(openHours),
+    [openHours]
   );
 
   useEffect(() => {
@@ -67,7 +72,6 @@ export default function ScheduleCalendar({
   useEffect(() => {
     console.log('availableSlots', availableSlots);
   }, [availableSlots]);
-  const combinedOpenHours = useSelector(selectCombinedOpenHours);
 
   const onChangeSlotTime = useCallback(
     (start, end, id) => {

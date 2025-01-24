@@ -9,11 +9,12 @@ import {
   useDeleteSlotsMutation,
 } from '../../app/services/slotApiSlice';
 import * as SlotStatusConstants from '../../common/constants/slotStatus';
+import { useSelector } from 'react-redux';
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 
 export const ActionBar = ({ availableSlots, setAvailableSlots }) => {
-  // const { data: slots } = useGetSlotsQuery({ studentId: 10, coachId: 10 });
+  const { user } = useSelector((state) => state.auth);
   const [createSlots, { isLoading: isCreatingSlots }] =
     useCreateSlotsMutation();
   const [deleteSlots, { isLoading: isDeletingSlots }] =
@@ -22,8 +23,8 @@ export const ActionBar = ({ availableSlots, setAvailableSlots }) => {
   const schedule = useCallback(async () => {
     try {
       await createSlots({
-        studentId: 10,
-        coachId: 10,
+        studentId: user?.id,
+        coachId: user?.coach,
         slots: availableSlots
           .filter(({ start }) => start > Date.now())
           .map(({ start, end }) => ({

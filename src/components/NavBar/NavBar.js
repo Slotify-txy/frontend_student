@@ -15,38 +15,35 @@ export const NavBar = ({
   setTab,
 }) => {
   return (
-    <Box sx={{ height: '100%' }}>
+    <Stack
+      sx={{
+        flexDirection: 'row',
+        px: 4,
+        alignItems: 'center',
+      }}
+    >
+      <Box mr={5}>
+        <Logo />
+      </Box>
+      <Box flex={1} mr={5}>
+        <CalendarControl
+          calendarView={calendarView}
+          setCalendarView={setCalendarView}
+          calendarRange={calendarRange}
+          setCalendarDate={setCalendarDate}
+          tab={tab}
+          setTab={setTab}
+        />
+      </Box>
       <Stack
         sx={{
-          height: '100%',
+          ml: 'auto',
           flexDirection: 'row',
-          px: 4,
           alignItems: 'center',
         }}
       >
-        <Box mr={5}>
-          <Logo />
-        </Box>
-        <Box flex={1} mr={5}>
-          <CalendarControl
-            calendarView={calendarView}
-            setCalendarView={setCalendarView}
-            calendarRange={calendarRange}
-            setCalendarDate={setCalendarDate}
-            tab={tab}
-            setTab={setTab}
-          />
-        </Box>
-        <Stack
-          sx={{
-            ml: 'auto',
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}
-        >
-          <Profile />
-        </Stack>
+        <Profile />
       </Stack>
-    </Box>
+    </Stack>
   );
 };

@@ -6,13 +6,14 @@ import reportWebVitals from './reportWebVitals';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { store } from './app/store';
 import { Provider } from 'react-redux';
-import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { BrowserRouter, Route, Routes } from 'react-router';
 
 const theme = createTheme({
   typography: {
     fontFamily: [
+      'Roboto Flex',
       '-apple-system',
       'BlinkMacSystemFont',
       'Segoe UI',

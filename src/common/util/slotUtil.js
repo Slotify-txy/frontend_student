@@ -55,6 +55,26 @@ export const isOverlapped = (slots, start, end, id = undefined) => {
   });
 };
 
+export const combineOpenHours = (openHours) => {
+  openHours = openHours ?? [];
+  const copy = [];
+  openHours.forEach((openHour) => copy.push(openHour));
+  copy.sort((a, b) => moment(a.start) - moment(b.start));
+  const ranges = copy.map((openHour) =>
+    moment.range(moment(openHour.start), moment(openHour.end))
+  );
+  const ret = [];
+  for (let i = 0; i < ranges.length; i++) {
+    let range = ranges[i];
+    while (i + 1 < ranges.length && range.adjacent(ranges[i + 1])) {
+      range = range.add(ranges[i + 1], { adjacent: true });
+      i += 1;
+    }
+    ret.push(range);
+  }
+  return ret;
+};
+
 export const getStatusColor = (status) => {
   switch (status) {
     case SlotStatusConstants.AVAILABLE:
