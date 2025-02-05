@@ -15,7 +15,7 @@ const SchedulePage = ({
   calendarDate,
   setCalendarDate,
 }) => {
-  const [availableSlots, setAvailableSlots] = useState([]);
+  const [planningSlots, setPlanningSlots] = useState([]);
 
   return (
     <Box
@@ -27,8 +27,8 @@ const SchedulePage = ({
     >
       <Box sx={{ flex: 1, ml: 1 }}>
         <ScheduleCalendar
-          availableSlots={availableSlots}
-          setAvailableSlots={setAvailableSlots}
+          planningSlots={planningSlots}
+          setPlanningSlots={setPlanningSlots}
           calendarView={calendarView}
           setCalendarView={setCalendarView}
           setCalendarRange={setCalendarRange}
@@ -38,8 +38,8 @@ const SchedulePage = ({
       </Box>
       <Box sx={{ height: '100%', width: 70 }}>
         <ActionBar
-          availableSlots={availableSlots}
-          setAvailableSlots={setAvailableSlots}
+          planningSlots={planningSlots}
+          setPlanningSlots={setPlanningSlots}
         />
       </Box>
     </Box>

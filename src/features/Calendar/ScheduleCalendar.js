@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { useGetOpenHoursQuery } from '../../app/services/openHourApiSlice';
 import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
-import * as SlotStatusConstants from '../../common/constants/slotStatus';
+import SLOT_STATUS from '../../common/constants/slotStatus';
 import {
   combineOpenHours,
   convertSlots,
@@ -27,8 +27,8 @@ const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 const DnDCalendar = withDragAndProp(Calendar);
 
 export default function ScheduleCalendar({
-  availableSlots,
-  setAvailableSlots,
+  planningSlots,
+  setPlanningSlots,
   setCalendarRange,
   calendarView,
   setCalendarView,
@@ -42,7 +42,7 @@ export default function ScheduleCalendar({
     isFetching,
     isSuccess,
   } = useGetSlotsQuery(
-    { studentId: user?.id, coachId: user?.coach },
+    { studentId: user?.id, coachId: user?.coachId },
     {
       selectFromResult: (result) => {
         result.data = convertSlots(result.data ?? []);
@@ -57,7 +57,7 @@ export default function ScheduleCalendar({
     isFetching: isFetchingOpenHours,
     isSuccess: isOpenHoursSuccess,
   } = useGetOpenHoursQuery(
-    { coachId: user?.coach },
+    { coachId: user?.coachId },
     { skip: status != AuthStatus.AUTHENTICATED || user == null }
   );
 
@@ -66,54 +66,54 @@ export default function ScheduleCalendar({
     [openHours]
   );
 
-  useEffect(() => {
-    console.log('slots', slots);
-  }, [slots]);
-  useEffect(() => {
-    console.log('availableSlots', availableSlots);
-  }, [availableSlots]);
+  // useEffect(() => {
+  //   console.log('slots', slots);
+  // }, [slots]);
+  // useEffect(() => {
+  //   console.log('availableSlots', planningSlots);
+  // }, [planningSlots]);
 
   const onChangeSlotTime = useCallback(
     (start, end, id) => {
       if (
-        isOverlapped([...slots, ...availableSlots], start, end, id) ||
+        isOverlapped([...slots, ...planningSlots], start, end, id) ||
         !isAvailable(combinedOpenHours, start, end)
       ) {
         // todo: notifications
         return;
       }
 
-      setAvailableSlots((prev) => {
+      setPlanningSlots((prev) => {
         let slot = prev.find((slot) => slot.id === id);
         slot.start = start;
         slot.end = end;
         return prev;
       });
     },
-    [slots, availableSlots]
+    [slots, planningSlots]
   );
 
   const onSelect = useCallback(
     (start, end) => {
       if (
         !isAvailable(combinedOpenHours, start, end) ||
-        isOverlapped([...slots, ...availableSlots], start, end)
+        isOverlapped([...slots, ...planningSlots], start, end)
       ) {
         // todo: notifications
         return;
       }
-      setAvailableSlots((prev) => [
+      setPlanningSlots((prev) => [
         ...prev,
         {
           id: uuidv4(),
           start: start,
           end: end,
-          status: SlotStatusConstants.AVAILABLE,
+          status: SLOT_STATUS.PLANNING,
           isDraggable: true,
         },
       ]);
     },
-    [slots, combinedOpenHours, availableSlots]
+    [slots, combinedOpenHours, planningSlots]
   );
 
   const slotPropGetter = useCallback(
@@ -132,14 +132,10 @@ export default function ScheduleCalendar({
     [openHours, isOpenHoursSuccess]
   );
 
-  if (isFetching) {
-    return <Box>Loading...</Box>;
-  }
-
   return (
     <Box style={{ height: '100%' }}>
       <StyledCalendar
-        events={[...availableSlots, ...slots]}
+        events={[...planningSlots, ...slots]}
         date={calendarDate}
         view={calendarView}
         onEventDrop={({ start, end, event }) => {
@@ -156,7 +152,7 @@ export default function ScheduleCalendar({
         slotPropGetter={slotPropGetter}
         createCustomEventComponent={(props) => (
           <CustomEventComponent
-            setAvailableSlots={setAvailableSlots}
+            setPlanningSlots={setPlanningSlots}
             {...props}
           />
         )}

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import * as SlotStatusConstants from '../../common/constants/slotStatus';
+import SLOT_STATUS from '../../common/constants/slotStatus';
 import { api } from './api';
 
 export const openHourApiSlice = api.injectEndpoints({
@@ -14,7 +14,7 @@ export const openHourApiSlice = api.injectEndpoints({
           start: startAt,
           end: endAt,
           isDraggable: false,
-          status: SlotStatusConstants.AVAILABLE,
+          status: SLOT_STATUS.OPEN_HOUR,
         })),
       providesTags: (result) =>
         result

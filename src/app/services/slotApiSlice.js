@@ -13,8 +13,9 @@ export const slotApiSlice = api.injectEndpoints({
       query: ({ studentId, coachId }) =>
         `/slot/student/${studentId}/coach/${coachId}`,
       transformResponse: (response) =>
-        response.map(({ startAt, endAt, status }) => ({
-          id: uuidv4(),
+        response.map(({ id, startAt, endAt, status }) => ({
+          // id: uuidv4(),
+          id,
           start: startAt, // can't do `moment(startAt).toDate(),` because redux doesn't store date object
           end: endAt,
           status,
@@ -29,17 +30,25 @@ export const slotApiSlice = api.injectEndpoints({
           : [{ type: 'Slots', id: 'LIST' }],
     }),
     createSlots: builder.mutation({
-      query: ({ studentId, coachId, slots }) => ({
-        url: `/slot/student/${studentId}/coach/${coachId}`,
+      query: ({ slots }) => ({
+        url: `/slot`,
         method: 'POST',
         body: slots,
       }),
       invalidatesTags: [{ type: 'Slots', id: 'LIST' }],
     }),
-    deleteSlots: builder.mutation({
-      query: ({ studentId, coachId }) => ({
-        url: `/slot/student/${studentId}/coach/${coachId}`,
+    // deleteSlots: builder.mutation({
+    //   query: ({ studentId, coachId }) => ({
+    //     url: `/slot/student/${studentId}/coach/${coachId}`,
+    //     method: 'DELETE',
+    //   }),
+    //   invalidatesTags: (result, error, id) => [{ type: 'Slots', id }],
+    // }),
+    deleteSlotById: builder.mutation({
+      query: (id) => ({
+        url: `/slot/${id}`,
         method: 'DELETE',
+        responseHandler: (response) => response.text(), // by default, rtk query receives json response
       }),
       invalidatesTags: (result, error, id) => [{ type: 'Slots', id }],
     }),
@@ -50,4 +59,5 @@ export const {
   useGetSlotsQuery,
   useCreateSlotsMutation,
   useDeleteSlotsMutation,
+  useDeleteSlotByIdMutation,
 } = slotApiSlice;

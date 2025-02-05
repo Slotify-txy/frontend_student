@@ -1,6 +1,6 @@
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
-import * as SlotStatusConstants from '../../common/constants/slotStatus';
+import SLOT_STATUS from '../../common/constants/slotStatus';
 
 const moment = extendMoment(Moment);
 
@@ -40,10 +40,9 @@ export const isAvailable = (combinedOpenHours, start, end) => {
 };
 
 /**
- *
+ * Check if the slot will overlaps with existing slots
  * @param {*} id `undefined` when selecting slots to form an event
  */
-// check if the slot will overlaps with existing slots
 export const isOverlapped = (slots, start, end, id = undefined) => {
   return slots.some((slot) => {
     if (id && slot.id === id) {
@@ -77,13 +76,13 @@ export const combineOpenHours = (openHours) => {
 
 export const getStatusColor = (status) => {
   switch (status) {
-    case SlotStatusConstants.AVAILABLE:
+    case SLOT_STATUS.AVAILABLE:
       return '#039BE5';
-    case SlotStatusConstants.SCHEDULING:
+    case SLOT_STATUS.PENDING:
       return '#f6bf26';
-    case SlotStatusConstants.PUBLISHED:
+    case SLOT_STATUS.APPOINTMENT:
       return '#33b679';
-    case SlotStatusConstants.PLANNING:
+    case SLOT_STATUS.PLANNING:
       return '#7986cb';
     default:
       return '';

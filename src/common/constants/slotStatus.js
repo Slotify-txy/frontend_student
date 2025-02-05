@@ -1,5 +1,9 @@
-export const AVAILABLE = 'AVAILABLE';
-export const SCHEDULING = 'SCHEDULING';
-export const PUBLISHED = 'PUBLISHED';
-export const PLANNING = 'PLANNING';
-export const APPOINTMENT = 'APPOINTMENT';
+const SLOT_STATUS = Object.freeze({
+  AVAILABLE: 'AVAILABLE',
+  PENDING: 'PENDING',
+  OPEN_HOUR: 'OPEN_HOUR',
+  PLANNING: 'PLANNING',
+  APPOINTMENT: 'APPOINTMENT',
+});
+
+export default SLOT_STATUS;

@@ -110,6 +110,7 @@ export default function StyledCalendar({
       localizer={localizer}
       events={events}
       date={date}
+      dayLayoutAlgorithm={'no-overlap'}
       draggableAccessor={'isDraggable'}
       views={['month', 'week']}
       view={view}

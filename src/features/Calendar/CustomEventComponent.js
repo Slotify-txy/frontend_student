@@ -2,25 +2,31 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 import moment from 'moment-timezone';
 import React, { useCallback, useState } from 'react';
-import * as SlotStatusConstants from '../../common/constants/slotStatus';
+import SLOT_STATUS from '../../common/constants/slotStatus';
 import {
   convertStatusToText,
   getStatusColor,
 } from '../../common/util/slotUtil';
+import { useDeleteSlotByIdMutation } from '../../app/services/slotApiSlice';
 
-const CustomEventComponent = ({ event, setAvailableSlots }) => {
+const CustomEventComponent = ({ event, setPlanningSlots }) => {
   const start = moment(event.start).format('hh:mm A');
   const end = moment(event.end).format('hh:mm A');
   const status = event.status;
   const [onHover, setOnHover] = useState(false);
   const backgroundColor = getStatusColor(status);
+  const [deleteSlotById] = useDeleteSlotByIdMutation();
 
   const deleteSlot = useCallback(() => {
-    if (event.status !== SlotStatusConstants.AVAILABLE) {
-      return;
+    switch (event.status) {
+      case SLOT_STATUS.PLANNING:
+        setPlanningSlots((prev) => prev.filter((slot) => slot.id !== event.id));
+        break;
+      case SLOT_STATUS.AVAILABLE:
+        deleteSlotById(event.id);
+        break;
     }
-    setAvailableSlots((prev) => prev.filter((slot) => slot.id !== event.id));
-  }, [event]);
+  }, [event, setPlanningSlots]);
 
   return (
     <Box
@@ -29,7 +35,7 @@ const CustomEventComponent = ({ event, setAvailableSlots }) => {
         paddingX: '0.3rem',
         overflow: 'hidden',
         backgroundColor: backgroundColor,
-        borderRadius: 2,
+        borderRadius: '8px',
       }}
       onMouseEnter={() => setOnHover(true)}
       onMouseLeave={() => setOnHover(false)}
@@ -47,7 +53,6 @@ const CustomEventComponent = ({ event, setAvailableSlots }) => {
           sx={{
             fontSize: 15,
             fontWeight: 700,
-            alignSelf: 'center',
           }}
         >
           {convertStatusToText(status)}
@@ -59,16 +64,16 @@ const CustomEventComponent = ({ event, setAvailableSlots }) => {
               <IconButton
                 onClick={deleteSlot}
                 onMouseDown={(e) => e.stopPropagation()} // otherwise, it triggers with onDragStart
-                sx={{ padding: 0, alignSelf: 'center' }}
+                sx={{ padding: 0.2 }}
                 aria-label="delete"
               >
-                <DeleteIcon fontSize="small" />
+                <DeleteIcon sx={{ fontSize: 18 }} />
               </IconButton>
             </Tooltip>
           )
         }
       </Box>
-      <Typography sx={{ fontSize: 15, alignSelf: 'center' }}>
+      <Typography sx={{ fontSize: 15 }}>
         {start} - {end}
       </Typography>
     </Box>

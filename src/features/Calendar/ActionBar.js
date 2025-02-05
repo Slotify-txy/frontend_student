@@ -8,39 +8,37 @@ import {
   useCreateSlotsMutation,
   useDeleteSlotsMutation,
 } from '../../app/services/slotApiSlice';
-import * as SlotStatusConstants from '../../common/constants/slotStatus';
+import SLOT_STATUS from '../../common/constants/slotStatus';
 import { useSelector } from 'react-redux';
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 
-export const ActionBar = ({ availableSlots, setAvailableSlots }) => {
+export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
   const { user } = useSelector((state) => state.auth);
   const [createSlots, { isLoading: isCreatingSlots }] =
     useCreateSlotsMutation();
-  const [deleteSlots, { isLoading: isDeletingSlots }] =
-    useDeleteSlotsMutation();
 
   const schedule = useCallback(async () => {
     try {
       await createSlots({
-        studentId: user?.id,
-        coachId: user?.coach,
-        slots: availableSlots
+        slots: planningSlots
           .filter(({ start }) => start > Date.now())
           .map(({ start, end }) => ({
+            studentId: user?.id,
+            coachId: user?.coachId,
             startAt: moment(start).format(timeFormat),
             endAt: moment(end).format(timeFormat),
-            status: SlotStatusConstants.SCHEDULING,
+            status: SLOT_STATUS.AVAILABLE,
           })),
       }).unwrap();
-      setAvailableSlots([]);
+      setPlanningSlots([]);
     } catch (error) {
       console.log('error', error);
     }
-  }, [availableSlots]);
+  }, [planningSlots]);
 
   const clearSlots = useCallback(() => {
-    setAvailableSlots([]);
+    setPlanningSlots([]);
   }, []);
 
   return (
