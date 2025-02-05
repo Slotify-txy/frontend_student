@@ -19,7 +19,7 @@ import {
 } from '../../common/util/slotUtil';
 import CustomEventComponent from './CustomEventComponent';
 import StyledCalendar from '../../components/StyledCalendar';
-import * as AuthStatus from '../../common/constants/authStatus';
+import AUTH_STATUS from '../../common/constants/authStatus';
 
 const moment = extendMoment(Moment);
 const localizer = momentLocalizer(Moment);
@@ -48,7 +48,7 @@ export default function ScheduleCalendar({
         result.data = convertSlots(result.data ?? []);
         return result;
       },
-      skip: status != AuthStatus.AUTHENTICATED || user == null,
+      skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
     }
   );
 
@@ -58,7 +58,7 @@ export default function ScheduleCalendar({
     isSuccess: isOpenHoursSuccess,
   } = useGetOpenHoursQuery(
     { coachId: user?.coachId },
-    { skip: status != AuthStatus.AUTHENTICATED || user == null }
+    { skip: status != AUTH_STATUS.AUTHENTICATED || user == null }
   );
 
   const combinedOpenHours = useMemo(

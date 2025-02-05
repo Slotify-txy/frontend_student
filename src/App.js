@@ -6,7 +6,7 @@ import SchedulePage from './features/Calendar/SchedulePage';
 import moment from 'moment';
 import * as CalendarViewConstants from './common/constants/calendarView';
 import Login from './components/Login';
-import * as AuthStatus from './common/constants/authStatus';
+import AUTH_STATUS from './common/constants/authStatus';
 import { useGetUserQuery } from './app/services/userApiSlice';
 import { useSelector } from 'react-redux';
 
@@ -16,7 +16,7 @@ function App() {
 
   const { status } = useSelector((state) => state.auth);
   const { isFetching } = useGetUserQuery(null, {
-    skip: status != AuthStatus.AUTHENTICATED,
+    skip: status != AUTH_STATUS.AUTHENTICATED,
   });
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [calendarView, setCalendarView] = useState(CalendarViewConstants.WEEK);
