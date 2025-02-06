@@ -84,7 +84,9 @@ export const getStatusColor = (status) => {
       return '#33b679';
     case SLOT_STATUS.PLANNING:
       return '#7986cb';
-    default:
-      return '';
+    case SLOT_STATUS.REJECTED:
+      return '#616161';
+    case SLOT_STATUS.CANCELLED:
+      return '#d50100';
   }
 };

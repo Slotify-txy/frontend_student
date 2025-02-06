@@ -66,9 +66,9 @@ export default function ScheduleCalendar({
     [openHours]
   );
 
-  // useEffect(() => {
-  //   console.log('slots', slots);
-  // }, [slots]);
+  useEffect(() => {
+    console.log('slots', slots);
+  }, [slots]);
   // useEffect(() => {
   //   console.log('availableSlots', planningSlots);
   // }, [planningSlots]);

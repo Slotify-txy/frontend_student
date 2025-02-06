@@ -4,7 +4,7 @@ import './App.css';
 import { NavBar } from './components/NavBar/NavBar';
 import SchedulePage from './features/Calendar/SchedulePage';
 import moment from 'moment';
-import * as CalendarViewConstants from './common/constants/calendarView';
+import CALENDAR_VIEW from './common/constants/calendarView';
 import Login from './components/Login';
 import AUTH_STATUS from './common/constants/authStatus';
 import { useGetUserQuery } from './app/services/userApiSlice';
@@ -19,7 +19,7 @@ function App() {
     skip: status != AUTH_STATUS.AUTHENTICATED,
   });
   const [calendarDate, setCalendarDate] = useState(new Date());
-  const [calendarView, setCalendarView] = useState(CalendarViewConstants.WEEK);
+  const [calendarView, setCalendarView] = useState(CALENDAR_VIEW.WEEK);
   const [calendarRange, setCalendarRange] = useState({
     start: moment().startOf('week'),
     end: moment().endOf('week'),

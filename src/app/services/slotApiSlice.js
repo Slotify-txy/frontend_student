@@ -52,6 +52,13 @@ export const slotApiSlice = api.injectEndpoints({
       }),
       invalidatesTags: (result, error, id) => [{ type: 'Slots', id }],
     }),
+    updateSlotStatusById: builder.mutation({
+      query: ({ id, status }) => ({
+        url: `/slot/${id}?status=${status}`,
+        method: 'PUT',
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Slots', id }],
+    }),
   }),
 });
 
@@ -60,4 +67,5 @@ export const {
   useCreateSlotsMutation,
   useDeleteSlotsMutation,
   useDeleteSlotByIdMutation,
+  useUpdateSlotStatusByIdMutation,
 } = slotApiSlice;
