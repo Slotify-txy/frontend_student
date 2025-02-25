@@ -13,12 +13,13 @@ export const slotApiSlice = api.injectEndpoints({
       query: ({ studentId, coachId }) =>
         `/slot/student/${studentId}/coach/${coachId}`,
       transformResponse: (response) =>
-        response.map(({ id, startAt, endAt, status }) => ({
+        response.map(({ id, startAt, endAt, status, classId }) => ({
           // id: uuidv4(),
           id,
           start: startAt, // can't do `moment(startAt).toDate(),` because redux doesn't store date object
           end: endAt,
           status,
+          classId,
           isDraggable: false,
         })),
       providesTags: (result) =>

@@ -48,6 +48,32 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
     updateSlotStatusById({ id: event.id, status: SLOT_STATUS.CANCELLED });
   }, [event]);
 
+  const buildEventAction = useCallback(() => {
+    switch (status) {
+      case SLOT_STATUS.PLANNING:
+      case SLOT_STATUS.AVAILABLE:
+        return (
+          <EventAction title="Delete" onClick={deleteSlot} Icon={DeleteIcon} />
+        );
+      case SLOT_STATUS.PENDING:
+        return (
+          <Stack direction="row">
+            <EventAction
+              title="Schedule"
+              onClick={confirm}
+              Icon={ThumbUpAltIcon}
+            />
+
+            <EventAction title="Reject" onClick={reject} Icon={ThumbDownIcon} />
+          </Stack>
+        );
+      case SLOT_STATUS.APPOINTMENT:
+        return (
+          <EventAction title="Cancel" onClick={cancel} Icon={CancelIcon} />
+        );
+    }
+  }, [status, deleteSlot, reject, cancel]);
+
   return (
     <Box
       sx={{
@@ -76,48 +102,12 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
           }}
         >
           {convertStatusToText(status)}
+          {event.classId && ` - #${event.classId?.slice(-4)}`}
         </Typography>
 
         {
           // todo: make ui better
-          onHover &&
-            (() => {
-              switch (status) {
-                case SLOT_STATUS.PLANNING:
-                case SLOT_STATUS.AVAILABLE:
-                  return (
-                    <EventAction
-                      title="Delete"
-                      onClick={deleteSlot}
-                      Icon={DeleteIcon}
-                    />
-                  );
-                case SLOT_STATUS.PENDING:
-                  return (
-                    <Stack direction="row">
-                      <EventAction
-                        title="Schedule"
-                        onClick={confirm}
-                        Icon={ThumbUpAltIcon}
-                      />
-
-                      <EventAction
-                        title="Reject"
-                        onClick={reject}
-                        Icon={ThumbDownIcon}
-                      />
-                    </Stack>
-                  );
-                case SLOT_STATUS.APPOINTMENT:
-                  return (
-                    <EventAction
-                      title="Cancel"
-                      onClick={cancel}
-                      Icon={CancelIcon}
-                    />
-                  );
-              }
-            })()
+          onHover && buildEventAction()
         }
       </Box>
       <Typography sx={{ fontSize: 13 }}>
