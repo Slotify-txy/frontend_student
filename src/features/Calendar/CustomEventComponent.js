@@ -5,6 +5,7 @@ import React, { useCallback, useState } from 'react';
 import SLOT_STATUS from '../../common/constants/slotStatus';
 import {
   convertStatusToText,
+  getDisplayedTime,
   getStatusColor,
 } from '../../common/util/slotUtil';
 import {
@@ -17,9 +18,7 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 const CustomEventComponent = ({ event, setPlanningSlots }) => {
-  const start = moment(event.start).format('hh:mm A');
-  const end = moment(event.end).format('hh:mm A');
-  const status = event.status;
+  const { start, end, status } = event;
   const [onHover, setOnHover] = useState(false);
   const backgroundColor = getStatusColor(status);
   const [deleteSlotById] = useDeleteSlotByIdMutation();
@@ -111,7 +110,7 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
         }
       </Box>
       <Typography sx={{ fontSize: 13 }}>
-        {start} - {end}
+        {getDisplayedTime(start, end)}
       </Typography>
     </Box>
   );
