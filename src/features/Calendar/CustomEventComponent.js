@@ -30,12 +30,13 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
         setPlanningSlots((prev) => prev.filter((slot) => slot.id !== event.id));
         break;
       case SLOT_STATUS.AVAILABLE:
+      case SLOT_STATUS.CANCELLED:
         deleteSlotById(event.id);
         break;
     }
   }, [event, setPlanningSlots]);
 
-  const confirm = useCallback(() => {
+  const accept = useCallback(() => {
     updateSlotStatusById({ id: event.id, status: SLOT_STATUS.APPOINTMENT });
   }, [event]);
 
@@ -51,6 +52,8 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
     switch (status) {
       case SLOT_STATUS.PLANNING:
       case SLOT_STATUS.AVAILABLE:
+      case SLOT_STATUS.CANCELLED:
+      case SLOT_STATUS.REJECTED:
         return (
           <EventAction title="Delete" onClick={deleteSlot} Icon={DeleteIcon} />
         );
@@ -58,8 +61,8 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
         return (
           <Stack direction="row">
             <EventAction
-              title="Schedule"
-              onClick={confirm}
+              title="Accept"
+              onClick={accept}
               Icon={ThumbUpAltIcon}
             />
 
@@ -96,7 +99,7 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
       >
         <Typography
           sx={{
-            fontSize: 13,
+            fontSize: 12,
             fontWeight: 700,
           }}
         >
@@ -109,7 +112,7 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
           onHover && buildEventAction()
         }
       </Box>
-      <Typography sx={{ fontSize: 13 }}>
+      <Typography sx={{ fontSize: 12 }}>
         {getDisplayedTime(start, end)}
       </Typography>
     </Box>
