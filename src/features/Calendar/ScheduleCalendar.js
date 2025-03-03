@@ -20,6 +20,7 @@ import {
 import CustomEventComponent from './CustomEventComponent';
 import StyledCalendar from '../../components/StyledCalendar';
 import AUTH_STATUS from '../../common/constants/authStatus';
+import { enqueueSnackbar } from 'notistack';
 
 const moment = extendMoment(Moment);
 const localizer = momentLocalizer(Moment);
@@ -75,11 +76,16 @@ export default function ScheduleCalendar({
 
   const onChangeSlotTime = useCallback(
     (start, end, id) => {
-      if (
-        isOverlapped([...slots, ...planningSlots], start, end, id) ||
-        !isAvailable(combinedOpenHours, start, end)
-      ) {
-        // todo: notifications
+      if (!isAvailable(combinedOpenHours, start, end)) {
+        enqueueSnackbar("Not in the coach's open hours!", {
+          variant: 'warning',
+        });
+        return;
+      }
+      if (isOverlapped([...slots, ...planningSlots], start, end, id)) {
+        enqueueSnackbar("Slots can't be overlapped!", {
+          variant: 'warning',
+        });
         return;
       }
 
@@ -95,11 +101,16 @@ export default function ScheduleCalendar({
 
   const onSelect = useCallback(
     (start, end) => {
-      if (
-        !isAvailable(combinedOpenHours, start, end) ||
-        isOverlapped([...slots, ...planningSlots], start, end)
-      ) {
-        // todo: notifications
+      if (!isAvailable(combinedOpenHours, start, end)) {
+        enqueueSnackbar("Not in the coach's open hours!", {
+          variant: 'warning',
+        });
+        return;
+      }
+      if (isOverlapped([...slots, ...planningSlots], start, end)) {
+        enqueueSnackbar("Slots can't be overlapped!", {
+          variant: 'warning',
+        });
         return;
       }
       setPlanningSlots((prev) => [

@@ -16,13 +16,17 @@ import EventAction from '../../components/EventAction';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { enqueueSnackbar } from 'notistack';
+import { deleteConfirmationAction } from '../../components/DeleteConfirmationAction';
 
 const CustomEventComponent = ({ event, setPlanningSlots }) => {
   const { start, end, status } = event;
   const [onHover, setOnHover] = useState(false);
   const backgroundColor = getStatusColor(status);
-  const [deleteSlotById] = useDeleteSlotByIdMutation();
-  const [updateSlotStatusById] = useUpdateSlotStatusByIdMutation();
+  const [deleteSlotById, { isLoading: isDeletingSlot }] =
+    useDeleteSlotByIdMutation();
+  const [updateSlotStatusById, { isLoading: isUpdatingSlot }] =
+    useUpdateSlotStatusByIdMutation();
 
   const deleteSlot = useCallback(() => {
     switch (event.status) {
@@ -31,21 +35,116 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
         break;
       case SLOT_STATUS.AVAILABLE:
       case SLOT_STATUS.CANCELLED:
-        deleteSlotById(event.id);
+      case SLOT_STATUS.REJECTED:
+        enqueueSnackbar('Are you sure you want to delete it?', {
+          variant: 'info',
+          autoHideDuration: null,
+          action: deleteConfirmationAction(async () => {
+            try {
+              await deleteSlotById(event.id).unwrap();
+              enqueueSnackbar('Deleted successfully!', {
+                variant: 'success',
+              });
+            } catch (err) {
+              let prompt = `Failed to delete it. `;
+              if (err.status === 409) {
+                prompt +=
+                  'The status is not up to date. Latest status fetched. ';
+              } else {
+                prompt += JSON.parse(err.data).message;
+              }
+              enqueueSnackbar(prompt, {
+                variant: 'error',
+              });
+            }
+          }),
+        });
         break;
     }
   }, [event, setPlanningSlots]);
 
   const accept = useCallback(() => {
-    updateSlotStatusById({ id: event.id, status: SLOT_STATUS.APPOINTMENT });
+    enqueueSnackbar('Are you sure you want to accept the class invitation?', {
+      variant: 'info',
+      autoHideDuration: null,
+      action: deleteConfirmationAction(async () => {
+        try {
+          await updateSlotStatusById({
+            id: event.id,
+            status: SLOT_STATUS.APPOINTMENT,
+          }).unwrap();
+          enqueueSnackbar('Class scheduled successfully!', {
+            variant: 'success',
+          });
+        } catch (err) {
+          let prompt = 'Failed to accept the class invitation. ';
+          if (err.status === 409) {
+            prompt += 'The status is not up to date. Latest status fetched. ';
+          } else {
+            prompt += JSON.parse(err.data).message;
+          }
+          enqueueSnackbar(prompt, {
+            variant: 'error',
+          });
+        }
+      }),
+    });
   }, [event]);
 
   const reject = useCallback(() => {
-    updateSlotStatusById({ id: event.id, status: SLOT_STATUS.REJECTED });
+    enqueueSnackbar('Are you sure you want to reject the class invitation?', {
+      variant: 'info',
+      autoHideDuration: null,
+      action: deleteConfirmationAction(async () => {
+        try {
+          await updateSlotStatusById({
+            id: event.id,
+            status: SLOT_STATUS.REJECTED,
+          }).unwrap();
+          enqueueSnackbar('Invitation rejected successfully!', {
+            variant: 'success',
+          });
+        } catch (err) {
+          let prompt = 'Failed to reject the class invitation. ';
+          if (err.status === 409) {
+            prompt += 'The status is not up to date. Latest status fetched. ';
+          } else {
+            prompt += JSON.parse(err.data).message;
+          }
+          enqueueSnackbar(prompt, {
+            variant: 'error',
+          });
+        }
+      }),
+    });
   }, [event]);
 
   const cancel = useCallback(() => {
-    updateSlotStatusById({ id: event.id, status: SLOT_STATUS.CANCELLED });
+    enqueueSnackbar('Are you sure you want to cancel the class?', {
+      variant: 'info',
+      autoHideDuration: null,
+      action: deleteConfirmationAction(async () => {
+        try {
+          await updateSlotStatusById({
+            id: event.id,
+            status: SLOT_STATUS.CANCELLED,
+          }).unwrap();
+          enqueueSnackbar('Class cancelled successfully!', {
+            variant: 'success',
+          });
+        } catch (err) {
+          let prompt = 'Failed to cancel the class. ';
+          if (err.status === 409) {
+            prompt += 'The status is not up to date. Latest status fetched. ';
+          } else {
+            prompt += JSON.parse(err.data).message;
+          }
+          enqueueSnackbar(prompt, {
+            variant: 'error',
+          });
+        }
+      }),
+    });
   }, [event]);
 
   const buildEventAction = useCallback(() => {
@@ -55,7 +154,12 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
       case SLOT_STATUS.CANCELLED:
       case SLOT_STATUS.REJECTED:
         return (
-          <EventAction title="Delete" onClick={deleteSlot} Icon={DeleteIcon} />
+          <EventAction
+            title="Delete"
+            onClick={deleteSlot}
+            Icon={DeleteIcon}
+            isLoading={isDeletingSlot}
+          />
         );
       case SLOT_STATUS.PENDING:
         return (
@@ -64,14 +168,25 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
               title="Accept"
               onClick={accept}
               Icon={ThumbUpAltIcon}
+              isLoading={isUpdatingSlot}
             />
 
-            <EventAction title="Reject" onClick={reject} Icon={ThumbDownIcon} />
+            <EventAction
+              title="Reject"
+              onClick={reject}
+              Icon={ThumbDownIcon}
+              isLoading={isUpdatingSlot}
+            />
           </Stack>
         );
       case SLOT_STATUS.APPOINTMENT:
         return (
-          <EventAction title="Cancel" onClick={cancel} Icon={CancelIcon} />
+          <EventAction
+            title="Cancel"
+            onClick={cancel}
+            Icon={CancelIcon}
+            isLoading={isUpdatingSlot}
+          />
         );
     }
   }, [status, deleteSlot, reject, cancel]);

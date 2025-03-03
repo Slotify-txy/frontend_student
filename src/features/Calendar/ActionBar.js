@@ -48,12 +48,14 @@ export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
         icon={<CheckBoxIcon />}
         tooltip={'Schedule'}
         callback={schedule}
+        disabled={planningSlots.length === 0}
       />
       <Action
         color={grey[700]}
         icon={<DeleteForeverIcon />}
         tooltip={'Clear'}
         callback={clearSlots}
+        disabled={planningSlots.length === 0}
       />
     </Box>
   );

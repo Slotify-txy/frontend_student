@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { BrowserRouter, Route, Routes } from 'react-router';
+import { SnackbarProvider } from 'notistack';
 
 const theme = createTheme({
   typography: {
@@ -35,11 +36,19 @@ root.render(
     <ThemeProvider theme={theme}>
       <React.StrictMode>
         <Provider store={store}>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<App />} />
-            </Routes>
-          </BrowserRouter>
+          <SnackbarProvider
+            autoHideDuration={2000}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+          >
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<App />} />
+              </Routes>
+            </BrowserRouter>
+          </SnackbarProvider>
         </Provider>
       </React.StrictMode>
     </ThemeProvider>
