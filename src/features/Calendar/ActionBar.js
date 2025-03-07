@@ -1,6 +1,6 @@
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { Box, IconButton, Tooltip } from '@mui/material';
+import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 import { green, grey } from '@mui/material/colors';
 import moment from 'moment-timezone';
 import React, { useCallback } from 'react';
@@ -10,6 +10,10 @@ import {
 } from '../../app/services/slotApiSlice';
 import SLOT_STATUS from '../../common/constants/slotStatus';
 import { useSelector } from 'react-redux';
+import EventAction from '../../components/EventAction';
+import { enqueueSnackbar } from 'notistack';
+import { confirmationAction } from '../../components/ConfirmationAction';
+import { v4 as uuidv4 } from 'uuid';
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 
@@ -19,26 +23,50 @@ export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
     useCreateSlotsMutation();
 
   const schedule = useCallback(async () => {
-    try {
-      await createSlots({
-        slots: planningSlots
-          .filter(({ start }) => start > Date.now())
-          .map(({ start, end }) => ({
-            studentId: user?.id,
-            coachId: user?.defaultCoachId,
-            startAt: moment(start).format(timeFormat),
-            endAt: moment(end).format(timeFormat),
-            status: SLOT_STATUS.AVAILABLE,
-          })),
-      }).unwrap();
-      setPlanningSlots([]);
-    } catch (error) {
-      console.log('error', error);
-    }
+    enqueueSnackbar(
+      <div>
+        <div>Are you sure you want to submit the availability?</div>
+        <div>
+          (Submit your full availability for a single class at once. For
+          multiple classes, submit availability separately for each class.)
+        </div>
+      </div>,
+      {
+        variant: 'info',
+        autoHideDuration: null,
+        key: 'schedule',
+        action: confirmationAction(async () => {
+          try {
+            await createSlots({
+              slots: planningSlots
+                .filter(({ start }) => start > Date.now())
+                .map(({ start, end }) => ({
+                  studentId: user?.id,
+                  coachId: user?.defaultCoachId,
+                  startAt: moment(start).format(timeFormat),
+                  endAt: moment(end).format(timeFormat),
+                  status: SLOT_STATUS.AVAILABLE,
+                })),
+            }).unwrap();
+            setPlanningSlots([]);
+            enqueueSnackbar('Availability submitted successfully!', {
+              variant: 'success',
+            });
+          } catch (err) {
+            enqueueSnackbar('Failed to submit the availability.', {
+              variant: 'error',
+            });
+          }
+        }),
+      }
+    );
   }, [planningSlots]);
 
   const clearSlots = useCallback(() => {
     setPlanningSlots([]);
+    enqueueSnackbar('Planning availability cleared!', {
+      variant: 'success',
+    });
   }, []);
 
   return (

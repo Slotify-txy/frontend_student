@@ -75,13 +75,6 @@ export default function ScheduleCalendar({
     [openHours]
   );
 
-  useEffect(() => {
-    console.log('slots', slots);
-  }, [slots]);
-  // useEffect(() => {
-  //   console.log('availableSlots', planningSlots);
-  // }, [planningSlots]);
-
   const onChangeSlotTime = useCallback(
     (start, end, id) => {
       if (!isAvailable(combinedOpenHours, start, end)) {
@@ -90,8 +83,16 @@ export default function ScheduleCalendar({
         });
         return;
       }
+
       if (isOverlapped([...slots, ...planningSlots], start, end, id)) {
         enqueueSnackbar("Slots can't be overlapped!", {
+          variant: 'warning',
+        });
+        return;
+      }
+
+      if (moment(end).diff(moment(start), 'hours') < 1) {
+        enqueueSnackbar('At least 1 hour long!', {
           variant: 'warning',
         });
         return;
@@ -115,12 +116,21 @@ export default function ScheduleCalendar({
         });
         return;
       }
+
       if (isOverlapped([...slots, ...planningSlots], start, end)) {
         enqueueSnackbar("Slots can't be overlapped!", {
           variant: 'warning',
         });
         return;
       }
+
+      if (moment(end).diff(moment(start), 'hours') < 1) {
+        enqueueSnackbar('At least 1 hour long!', {
+          variant: 'warning',
+        });
+        return;
+      }
+
       setPlanningSlots((prev) => [
         ...prev,
         {

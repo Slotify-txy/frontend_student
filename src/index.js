@@ -37,6 +37,7 @@ root.render(
       <React.StrictMode>
         <Provider store={store}>
           <SnackbarProvider
+            preventDuplicate
             autoHideDuration={2000}
             anchorOrigin={{
               vertical: 'top',

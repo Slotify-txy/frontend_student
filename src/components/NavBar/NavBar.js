@@ -1,8 +1,6 @@
 import { Box, Stack } from '@mui/material';
 import React from 'react';
-import CoachSelection from './CoachSelection';
 import Logo from './Logo';
-import LogOut from './LogOut';
 import { Profile } from './Profile';
 import CalendarControl from './CalendarControl';
 

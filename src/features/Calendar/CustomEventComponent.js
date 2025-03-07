@@ -39,6 +39,7 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
         enqueueSnackbar('Are you sure you want to delete it?', {
           variant: 'info',
           autoHideDuration: null,
+          key: event.id,
           action: confirmationAction(async () => {
             try {
               await deleteSlotById(event.id).unwrap();
@@ -67,6 +68,7 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
     enqueueSnackbar('Are you sure you want to accept the class invitation?', {
       variant: 'info',
       autoHideDuration: null,
+      key: 'accept',
       action: confirmationAction(async () => {
         try {
           await updateSlotStatusById({
@@ -95,6 +97,7 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
     enqueueSnackbar('Are you sure you want to reject the class invitation?', {
       variant: 'info',
       autoHideDuration: null,
+      key: 'reject',
       action: confirmationAction(async () => {
         try {
           await updateSlotStatusById({
@@ -123,6 +126,7 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
     enqueueSnackbar('Are you sure you want to cancel the class?', {
       variant: 'info',
       autoHideDuration: null,
+      key: 'cancel',
       action: confirmationAction(async () => {
         try {
           await updateSlotStatusById({

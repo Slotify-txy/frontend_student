@@ -108,6 +108,7 @@ export const Profile = () => {
   }, [defaultCoachId]);
 
   const open = Boolean(anchorEl);
+
   return (
     <Fragment>
       <IconButton onClick={handleClick}>
