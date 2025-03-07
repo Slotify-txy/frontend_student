@@ -2,22 +2,63 @@ import {
   Avatar,
   Box,
   Button,
+  Card,
   ClickAwayListener,
+  FormControl,
+  FormHelperText,
   IconButton,
+  InputBase,
+  InputLabel,
+  MenuItem,
   Paper,
   Popper,
+  Select,
+  Stack,
+  TextField,
   Typography,
 } from '@mui/material';
-import React, { Fragment } from 'react';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import LogoutIcon from '@mui/icons-material/Logout';
+import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import { logout } from '../../features/auth/authSlice';
+import EventAction from '../EventAction';
+import {
+  useAddCoachToStudentMutation,
+  useUpdateStudentMutation,
+} from '../../app/services/studentApiSlice';
+import { enqueueSnackbar } from 'notistack';
+import { useGetCoachesQuery } from '../../app/services/coachApiSlice';
+import AUTH_STATUS from '../../common/constants/authStatus';
+import { blue, green } from '@mui/material/colors';
+import InfoIcon from '@mui/icons-material/Info';
 
 export const Profile = () => {
+  const { user, status } = useSelector((state) => state.auth);
+
+  const [addCoachToStudent, { isLoading: isAddingCoachToStudent }] =
+    useAddCoachToStudentMutation();
+  const [updateStudent, { isLoading: isUpdatingStudent }] =
+    useUpdateStudentMutation();
+  const { data: coaches, isLoading } = useGetCoachesQuery(
+    { studentId: user?.id },
+    {
+      skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
+    }
+  );
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
-  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectOpen, setSelectOpen] = useState(false);
+  const [invitationCode, setInvitationCode] = useState('');
+  const [defaultCoachId, setDefaultCoachId] = useState('');
+  useEffect(() => {
+    if (user?.defaultCoachId) {
+      setDefaultCoachId(user?.defaultCoachId);
+    }
+  }, [user?.defaultCoachId]);
 
   const handleClick = (event) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -29,8 +70,42 @@ export const Profile = () => {
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    if (!selectOpen) {
+      setAnchorEl(null);
+      setDefaultCoachId(user?.defaultCoachId);
+    }
   };
+
+  const addCoach = useCallback(async () => {
+    try {
+      await addCoachToStudent({ id: user?.id, invitationCode }).unwrap();
+      enqueueSnackbar('Coach added successfully!', {
+        variant: 'success',
+      });
+    } catch (err) {
+      enqueueSnackbar(
+        `Failed to add the coach. ${err.status === 409 ? 'Coach already added before' : 'Invalid code'} .`,
+        {
+          variant: 'error',
+        }
+      );
+    } finally {
+      setInvitationCode('');
+    }
+  }, [invitationCode]);
+
+  const changeDefaultCoach = useCallback(async () => {
+    try {
+      await updateStudent({ student: { ...user, defaultCoachId } }).unwrap();
+      enqueueSnackbar('Default coach changed successfully!', {
+        variant: 'success',
+      });
+    } catch (err) {
+      enqueueSnackbar('Failed to changed the default coach.', {
+        variant: 'error',
+      });
+    }
+  }, [defaultCoachId]);
 
   const open = Boolean(anchorEl);
   return (
@@ -84,14 +159,93 @@ export const Profile = () => {
                   {user?.email}
                 </Typography>
               </Box>
+
               <Avatar
                 alt={user?.name}
                 src={user?.picture}
                 sx={{ mb: 1, width: 80, height: 80 }}
               />
+
               <Typography sx={{ fontSize: 22, fontWeight: 400, mb: 2 }}>
                 Hi, {user?.name}!
               </Typography>
+
+              {/* Add coach */}
+              <Stack
+                direction="row"
+                spacing={2}
+                alignItems={'center'}
+                sx={{ width: '100%', mb: 2 }}
+              >
+                <TextField
+                  fullWidth
+                  sx={{ ml: 1, flex: 1 }}
+                  placeholder="Invitation Code"
+                  label="Add a coach with invitation code"
+                  size="small"
+                  value={invitationCode}
+                  onChange={(e) => setInvitationCode(e.target.value)}
+                />
+                <EventAction
+                  title="Add Coach"
+                  color={blue[700]}
+                  onClick={addCoach}
+                  Icon={AddIcon}
+                  fontSize={28}
+                  disabled={
+                    // invitation code should be 6 digits and only numbers
+                    invitationCode.length !== 6 || !/^\d+$/.test(invitationCode)
+                  }
+                  isLoading={isAddingCoachToStudent}
+                />
+              </Stack>
+
+              {/* Coach selection */}
+              {coaches && coaches.length > 0 && (
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  alignItems={'center'}
+                  sx={{ width: '100%', mb: 2 }}
+                >
+                  <FormControl fullWidth sx={{ m: 1, minWidth: 120 }}>
+                    <InputLabel id="default-coach-selection-label">
+                      Default Coach
+                    </InputLabel>
+                    <Select
+                      labelId="default-coach-selection-label"
+                      id="default-coach-selection"
+                      value={defaultCoachId}
+                      label="Default Coach"
+                      onChange={(e) => setDefaultCoachId(e.target.value)}
+                      onOpen={() => setSelectOpen(true)}
+                      MenuProps={{
+                        TransitionProps: {
+                          onExited: () => setSelectOpen(false),
+                        },
+                      }}
+                      size="small"
+                    >
+                      {(coaches ?? []).map((coach) => (
+                        <MenuItem value={coach.id} key={coach.id}>
+                          {coach.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <EventAction
+                    title="Change Default Coach"
+                    color={green[700]}
+                    onClick={changeDefaultCoach}
+                    Icon={CheckBoxIcon}
+                    fontSize={28}
+                    disabled={user?.defaultCoachId === defaultCoachId}
+                    isLoading={isUpdatingStudent}
+                  />
+                </Stack>
+              )}
+
+              {/* Sign out */}
               <Button
                 startIcon={<LogoutIcon />}
                 sx={{

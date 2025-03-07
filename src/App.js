@@ -9,6 +9,7 @@ import Login from './components/Login';
 import AUTH_STATUS from './common/constants/authStatus';
 import { useGetUserQuery } from './app/services/userApiSlice';
 import { useSelector } from 'react-redux';
+import AddDefaultCoach from './components/AddDefaultCoach';
 
 function App() {
   const height = 48;
@@ -60,6 +61,7 @@ function App() {
         />
       </Box>
       <Login />
+      <AddDefaultCoach />
     </Fragment>
   );
 }

@@ -3,7 +3,7 @@ import { green, red } from '@mui/material/colors';
 import { closeSnackbar } from 'notistack';
 import { Button, Typography } from '@mui/material';
 
-export const deleteConfirmationAction = (callback) => (snackbarId) => (
+export const confirmationAction = (callback) => (snackbarId) => (
   <>
     <Button
       onClick={() => {

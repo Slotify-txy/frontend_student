@@ -17,7 +17,7 @@ import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { enqueueSnackbar } from 'notistack';
-import { deleteConfirmationAction } from '../../components/DeleteConfirmationAction';
+import { confirmationAction } from '../../components/ConfirmationAction';
 
 const CustomEventComponent = ({ event, setPlanningSlots }) => {
   const { start, end, status } = event;
@@ -39,7 +39,7 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
         enqueueSnackbar('Are you sure you want to delete it?', {
           variant: 'info',
           autoHideDuration: null,
-          action: deleteConfirmationAction(async () => {
+          action: confirmationAction(async () => {
             try {
               await deleteSlotById(event.id).unwrap();
               enqueueSnackbar('Deleted successfully!', {
@@ -67,7 +67,7 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
     enqueueSnackbar('Are you sure you want to accept the class invitation?', {
       variant: 'info',
       autoHideDuration: null,
-      action: deleteConfirmationAction(async () => {
+      action: confirmationAction(async () => {
         try {
           await updateSlotStatusById({
             id: event.id,
@@ -95,7 +95,7 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
     enqueueSnackbar('Are you sure you want to reject the class invitation?', {
       variant: 'info',
       autoHideDuration: null,
-      action: deleteConfirmationAction(async () => {
+      action: confirmationAction(async () => {
         try {
           await updateSlotStatusById({
             id: event.id,
@@ -123,7 +123,7 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
     enqueueSnackbar('Are you sure you want to cancel the class?', {
       variant: 'info',
       autoHideDuration: null,
-      action: deleteConfirmationAction(async () => {
+      action: confirmationAction(async () => {
         try {
           await updateSlotStatusById({
             id: event.id,

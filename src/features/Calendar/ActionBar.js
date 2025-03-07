@@ -25,7 +25,7 @@ export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
           .filter(({ start }) => start > Date.now())
           .map(({ start, end }) => ({
             studentId: user?.id,
-            coachId: user?.coachId,
+            coachId: user?.defaultCoachId,
             startAt: moment(start).format(timeFormat),
             endAt: moment(end).format(timeFormat),
             status: SLOT_STATUS.AVAILABLE,
@@ -73,6 +73,7 @@ const Action = ({ color, icon, tooltip, callback, disabled = false }) => {
     >
       <Tooltip
         title={tooltip}
+        placement="top"
         slotProps={{
           popper: {
             modifiers: [

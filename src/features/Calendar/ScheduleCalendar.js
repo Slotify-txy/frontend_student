@@ -43,13 +43,16 @@ export default function ScheduleCalendar({
     isFetching,
     isSuccess,
   } = useGetSlotsQuery(
-    { studentId: user?.id, coachId: user?.coachId },
+    { studentId: user?.id, coachId: user?.defaultCoachId },
     {
       selectFromResult: (result) => {
         result.data = convertSlots(result.data ?? []);
         return result;
       },
-      skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
+      skip:
+        status != AUTH_STATUS.AUTHENTICATED ||
+        user == null ||
+        user?.defaultCoachId == null,
     }
   );
 
@@ -58,8 +61,13 @@ export default function ScheduleCalendar({
     isFetching: isFetchingOpenHours,
     isSuccess: isOpenHoursSuccess,
   } = useGetOpenHoursQuery(
-    { coachId: user?.coachId },
-    { skip: status != AUTH_STATUS.AUTHENTICATED || user == null }
+    { coachId: user?.defaultCoachId },
+    {
+      skip:
+        status != AUTH_STATUS.AUTHENTICATED ||
+        user == null ||
+        user?.defaultCoachId == null,
+    }
   );
 
   const combinedOpenHours = useMemo(
