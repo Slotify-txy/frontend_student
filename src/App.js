@@ -10,6 +10,7 @@ import AUTH_STATUS from './common/constants/authStatus';
 import { useGetUserQuery } from './app/services/userApiSlice';
 import { useSelector } from 'react-redux';
 import AddDefaultCoach from './components/AddDefaultCoach';
+import { useLoginMutation } from './app/services/authApiSlice'; //It's not being used, but it's required
 
 function App() {
   const height = 48;
