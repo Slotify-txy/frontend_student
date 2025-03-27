@@ -1,26 +1,20 @@
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { Box, IconButton, Tooltip, Typography } from '@mui/material';
+import { Box, IconButton, Tooltip } from '@mui/material';
 import { green, grey } from '@mui/material/colors';
 import moment from 'moment-timezone';
 import React, { useCallback } from 'react';
-import {
-  useCreateSlotsMutation,
-  useDeleteSlotsMutation,
-} from '../../app/services/slotApiSlice';
+import { useCreateSlotsMutation } from '../../app/services/slotApiSlice';
 import SLOT_STATUS from '../../common/constants/slotStatus';
 import { useSelector } from 'react-redux';
-import EventAction from '../../components/EventAction';
 import { enqueueSnackbar } from 'notistack';
 import { confirmationAction } from '../../components/ConfirmationAction';
-import { v4 as uuidv4 } from 'uuid';
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 
 export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
   const { user } = useSelector((state) => state.auth);
-  const [createSlots, { isLoading: isCreatingSlots }] =
-    useCreateSlotsMutation();
+  const [createSlots] = useCreateSlotsMutation();
 
   const schedule = useCallback(async () => {
     enqueueSnackbar(

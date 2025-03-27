@@ -2,12 +2,9 @@ import {
   Avatar,
   Box,
   Button,
-  Card,
   ClickAwayListener,
   FormControl,
-  FormHelperText,
   IconButton,
-  InputBase,
   InputLabel,
   MenuItem,
   Paper,
@@ -25,24 +22,23 @@ import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import { logout } from '../../features/auth/authSlice';
 import EventAction from '../EventAction';
-import {
-  useAddCoachToStudentMutation,
-  useUpdateStudentMutation,
-} from '../../app/services/studentApiSlice';
 import { enqueueSnackbar } from 'notistack';
 import { useGetCoachesQuery } from '../../app/services/coachApiSlice';
 import AUTH_STATUS from '../../common/constants/authStatus';
 import { blue, green } from '@mui/material/colors';
-import InfoIcon from '@mui/icons-material/Info';
+import {
+  useAddCoachToUserMutation,
+  useUpdateUserMutation,
+} from '../../app/services/userApiSlice';
 
 export const Profile = () => {
   const { user, status } = useSelector((state) => state.auth);
 
-  const [addCoachToStudent, { isLoading: isAddingCoachToStudent }] =
-    useAddCoachToStudentMutation();
-  const [updateStudent, { isLoading: isUpdatingStudent }] =
-    useUpdateStudentMutation();
-  const { data: coaches, isLoading } = useGetCoachesQuery(
+  const [addCoachToUser, { isLoading: isAddingCoachToStudent }] =
+    useAddCoachToUserMutation();
+  const [updateUser, { isLoading: isUpdatingStudent }] =
+    useUpdateUserMutation();
+  const { data: coaches } = useGetCoachesQuery(
     { studentId: user?.id },
     {
       skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
@@ -78,7 +74,7 @@ export const Profile = () => {
 
   const addCoach = useCallback(async () => {
     try {
-      await addCoachToStudent({ id: user?.id, invitationCode }).unwrap();
+      await addCoachToUser({ id: user?.id, invitationCode }).unwrap();
       enqueueSnackbar('Coach added successfully!', {
         variant: 'success',
       });
@@ -96,7 +92,7 @@ export const Profile = () => {
 
   const changeDefaultCoach = useCallback(async () => {
     try {
-      await updateStudent({ student: { ...user, defaultCoachId } }).unwrap();
+      await updateUser({ student: { ...user, defaultCoachId } }).unwrap();
       enqueueSnackbar('Default coach changed successfully!', {
         variant: 'success',
       });

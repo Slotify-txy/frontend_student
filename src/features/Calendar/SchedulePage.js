@@ -1,11 +1,7 @@
-import { Box, Divider } from '@mui/material';
-import Moment from 'moment';
-import { extendMoment } from 'moment-range';
+import { Box } from '@mui/material';
 import React, { useState } from 'react';
 import { ActionBar } from './ActionBar';
 import ScheduleCalendar from './ScheduleCalendar';
-
-const moment = extendMoment(Moment);
 
 const SchedulePage = ({
   navBarHeight,

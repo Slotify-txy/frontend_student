@@ -1,25 +1,32 @@
-import { Box, Button, Typography } from '@mui/material';
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import { Box } from '@mui/material';
+import React, { Fragment, useEffect, useState } from 'react';
 import './App.css';
 import { NavBar } from './components/NavBar/NavBar';
 import SchedulePage from './features/Calendar/SchedulePage';
 import moment from 'moment';
 import CALENDAR_VIEW from './common/constants/calendarView';
 import Login from './components/Login';
-import AUTH_STATUS from './common/constants/authStatus';
+import AddDefaultCoach from './components/AddDefaultCoach';
 import { useGetUserQuery } from './app/services/userApiSlice';
 import { useSelector } from 'react-redux';
-import AddDefaultCoach from './components/AddDefaultCoach';
+import AUTH_STATUS from './common/constants/authStatus';
 import { useLoginMutation } from './app/services/authApiSlice'; //It's not being used, but it's required
+
+const _ = useLoginMutation;
 
 function App() {
   const height = 48;
   const py = 8;
 
-  const { status } = useSelector((state) => state.auth);
-  const { isFetching } = useGetUserQuery(null, {
-    skip: status != AUTH_STATUS.AUTHENTICATED,
-  });
+  const { userId, status } = useSelector((state) => state.auth);
+
+  useGetUserQuery(
+    { id: userId },
+    {
+      skip: status != AUTH_STATUS.AUTHENTICATED || userId == null,
+    }
+  );
+
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [calendarView, setCalendarView] = useState(CALENDAR_VIEW.WEEK);
   const [calendarRange, setCalendarRange] = useState({

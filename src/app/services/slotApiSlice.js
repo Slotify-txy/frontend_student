@@ -1,9 +1,4 @@
-import Moment from 'moment';
-import { extendMoment } from 'moment-range';
-import { v4 as uuidv4 } from 'uuid';
 import { api } from './api';
-
-const moment = extendMoment(Moment);
 
 export const slotApiSlice = api.injectEndpoints({
   reducerPath: 'slotsApi',

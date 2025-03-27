@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Stack,
   TextField,
@@ -14,23 +13,23 @@ import { useSelector } from 'react-redux';
 import EventAction from './EventAction';
 import { blue } from '@mui/material/colors';
 import AddIcon from '@mui/icons-material/Add';
-import { useAddCoachToStudentMutation } from '../app/services/studentApiSlice';
 import { enqueueSnackbar } from 'notistack';
+import { useAddCoachToUserMutation } from '../app/services/userApiSlice';
 
 export default function AddDefaultCoach() {
   const { user } = useSelector((state) => state.auth);
   const [openAddDefaultCoachDialog, setOpenAddDefaultCoachDialog] =
     useState(false);
   const [invitationCode, setInvitationCode] = useState('');
-  const [addCoachToStudent, { isLoading: isAddingCoachToStudent }] =
-    useAddCoachToStudentMutation();
+  const [addCoachToUser, { isLoading: isAddingCoachToStudent }] =
+    useAddCoachToUserMutation();
   const handleClose = useCallback(() => {
     setOpenAddDefaultCoachDialog(false);
   }, []);
 
   const addCoach = useCallback(async () => {
     try {
-      await addCoachToStudent({ id: user?.id, invitationCode }).unwrap();
+      await addCoachToUser({ id: user?.id, invitationCode }).unwrap();
       enqueueSnackbar('Coach added successfully!', {
         variant: 'success',
       });

@@ -1,11 +1,9 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import withDragAndProp from 'react-big-calendar/lib/addons/dragAndDrop';
+import React, { useCallback, useMemo } from 'react';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { useGetOpenHoursQuery } from '../../app/services/openHourApiSlice';
 import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
@@ -23,26 +21,16 @@ import AUTH_STATUS from '../../common/constants/authStatus';
 import { enqueueSnackbar } from 'notistack';
 
 const moment = extendMoment(Moment);
-const localizer = momentLocalizer(Moment);
-const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
-const DnDCalendar = withDragAndProp(Calendar);
 
 export default function ScheduleCalendar({
   planningSlots,
   setPlanningSlots,
-  setCalendarRange,
   calendarView,
-  setCalendarView,
   calendarDate,
-  setCalendarDate,
 }) {
   const { user, status } = useSelector((state) => state.auth);
 
-  const {
-    data: slots,
-    isFetching,
-    isSuccess,
-  } = useGetSlotsQuery(
+  const { data: slots } = useGetSlotsQuery(
     { studentId: user?.id, coachId: user?.defaultCoachId },
     {
       selectFromResult: (result) => {
@@ -56,19 +44,16 @@ export default function ScheduleCalendar({
     }
   );
 
-  const {
-    data: openHours,
-    isFetching: isFetchingOpenHours,
-    isSuccess: isOpenHoursSuccess,
-  } = useGetOpenHoursQuery(
-    { coachId: user?.defaultCoachId },
-    {
-      skip:
-        status != AUTH_STATUS.AUTHENTICATED ||
-        user == null ||
-        user?.defaultCoachId == null,
-    }
-  );
+  const { data: openHours, isSuccess: isOpenHoursSuccess } =
+    useGetOpenHoursQuery(
+      { coachId: user?.defaultCoachId },
+      {
+        skip:
+          status != AUTH_STATUS.AUTHENTICATED ||
+          user == null ||
+          user?.defaultCoachId == null,
+      }
+    );
 
   const combinedOpenHours = useMemo(
     () => combineOpenHours(openHours),
@@ -79,6 +64,13 @@ export default function ScheduleCalendar({
     (start, end, id) => {
       if (!isAvailable(combinedOpenHours, start, end)) {
         enqueueSnackbar("Not in the coach's open hours!", {
+          variant: 'warning',
+        });
+        return;
+      }
+
+      if (moment(start).isBefore(moment.now())) {
+        enqueueSnackbar('The start time must be set to a future time!', {
           variant: 'warning',
         });
         return;
@@ -112,6 +104,13 @@ export default function ScheduleCalendar({
     (start, end) => {
       if (!isAvailable(combinedOpenHours, start, end)) {
         enqueueSnackbar("Not in the coach's open hours!", {
+          variant: 'warning',
+        });
+        return;
+      }
+
+      if (moment(start).isBefore(moment.now())) {
+        enqueueSnackbar('The start time must be set to a future time!', {
           variant: 'warning',
         });
         return;
