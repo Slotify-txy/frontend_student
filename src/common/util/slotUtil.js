@@ -92,10 +92,10 @@ export const getDisplayedTime = (start, end) => {
   return `${formattedStart} - ${formattedEnd}`;
 };
 
-export const getStatusColor = (status) => {
+export const getStatusColor = (status, classId) => {
   switch (status) {
     case SLOT_STATUS.AVAILABLE:
-      return '#039BE5';
+      return `#${classId.slice(-6)}`;
     case SLOT_STATUS.PENDING:
       return '#f6bf26';
     case SLOT_STATUS.APPOINTMENT:
