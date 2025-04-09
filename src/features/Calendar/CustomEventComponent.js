@@ -22,7 +22,6 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
   const { start, end, status } = event;
   const [onHover, setOnHover] = useState(false);
   const backgroundColor = getStatusColor(status, event.classId);
-  console.log(backgroundColor);
   const [deleteSlotById, { isLoading: isDeletingSlot }] =
     useDeleteSlotByIdMutation();
   const [updateSlotStatusById, { isLoading: isUpdatingSlot }] =
