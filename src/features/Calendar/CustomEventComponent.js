@@ -1,5 +1,5 @@
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Popper, Stack, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import SLOT_STATUS from '../../common/constants/slotStatus';
 import {
@@ -21,6 +21,7 @@ import { confirmationAction } from '../../components/ConfirmationAction';
 const CustomEventComponent = ({ event, setPlanningSlots }) => {
   const { start, end, status } = event;
   const [onHover, setOnHover] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   const backgroundColor = getStatusColor(status, event.classId);
   const [deleteSlotById, { isLoading: isDeletingSlot }] =
     useDeleteSlotByIdMutation();
@@ -162,6 +163,7 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
             onClick={deleteSlot}
             Icon={DeleteIcon}
             isLoading={isDeletingSlot}
+            fontSize={20}
           />
         );
       case SLOT_STATUS.PENDING:
@@ -172,6 +174,8 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
               onClick={accept}
               Icon={ThumbUpAltIcon}
               isLoading={isUpdatingSlot}
+              fontSize={20}
+              color={'green'}
             />
 
             <EventAction
@@ -179,6 +183,7 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
               onClick={reject}
               Icon={ThumbDownIcon}
               isLoading={isUpdatingSlot}
+              fontSize={20}
             />
           </Stack>
         );
@@ -189,6 +194,8 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
             onClick={cancel}
             Icon={CancelIcon}
             isLoading={isUpdatingSlot}
+            fontSize={20}
+            color={'red'}
           />
         );
     }
@@ -203,8 +210,14 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
         backgroundColor: backgroundColor,
         borderRadius: '8px',
       }}
-      onMouseEnter={() => setOnHover(true)}
-      onMouseLeave={() => setOnHover(false)}
+      onMouseEnter={(event) => {
+        setOnHover(true);
+        setAnchorEl(event.currentTarget);
+      }}
+      onMouseLeave={() => {
+        setOnHover(false);
+        setAnchorEl(null);
+      }}
     >
       <Box
         sx={{
@@ -224,15 +237,37 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
           {convertStatusToText(status)}
           {event.classId && ` - #${event.classId?.slice(-4)}`}
         </Typography>
-
-        {
-          // todo: make ui better
-          onHover && buildEventAction()
-        }
       </Box>
       <Typography sx={{ fontSize: 12 }}>
         {getDisplayedTime(start, end)}
       </Typography>
+      <Popper
+        open={onHover}
+        anchorEl={anchorEl}
+        placement="top-end"
+        modifiers={[
+          {
+            name: 'flip',
+            enabled: true,
+            options: {
+              altBoundary: false,
+            },
+          },
+          {
+            name: 'preventOverflow',
+            enabled: true,
+            options: {
+              altAxis: true,
+              altBoundary: true,
+              tether: true,
+              rootBoundary: 'document',
+              padding: 8,
+            },
+          },
+        ]}
+      >
+        {onHover && buildEventAction()}
+      </Popper>
     </Box>
   );
 };
