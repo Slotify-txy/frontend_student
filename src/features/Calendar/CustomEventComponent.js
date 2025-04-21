@@ -1,6 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Box, Popper, Stack, Typography } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import { Box, Stack, Tooltip, Typography } from '@mui/material';
+import React, { useCallback } from 'react';
 import SLOT_STATUS from '../../common/constants/slotStatus';
 import {
   convertStatusToText,
@@ -20,8 +20,6 @@ import { confirmationAction } from '../../components/ConfirmationAction';
 
 const CustomEventComponent = ({ event, setPlanningSlots }) => {
   const { start, end, status } = event;
-  const [onHover, setOnHover] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
   const backgroundColor = getStatusColor(status, event.classId);
   const [deleteSlotById, { isLoading: isDeletingSlot }] =
     useDeleteSlotByIdMutation();
@@ -202,73 +200,62 @@ const CustomEventComponent = ({ event, setPlanningSlots }) => {
   }, [status, deleteSlot, reject, cancel]);
 
   return (
-    <Box
-      sx={{
-        height: '100%',
-        paddingX: '0.3rem',
-        overflow: 'hidden',
-        backgroundColor: backgroundColor,
-        borderRadius: '8px',
+    <Tooltip
+      interactive
+      arrow
+      placement="top"
+      slotProps={{
+        tooltip: {
+          sx: {
+            backgroundColor: 'white',
+          },
+        },
+        popper: {
+          modifiers: [
+            {
+              name: 'offset',
+              options: {
+                offset: [0, -5],
+              },
+            },
+          ],
+        },
       }}
-      onMouseEnter={(event) => {
-        setOnHover(true);
-        setAnchorEl(event.currentTarget);
-      }}
-      onMouseLeave={() => {
-        setOnHover(false);
-        setAnchorEl(null);
-      }}
+      title={buildEventAction()}
     >
       <Box
         sx={{
-          display: 'flex',
-          width: '100%',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          height: '100%',
+          paddingX: '0.3rem',
+          overflow: 'hidden',
+          backgroundColor: backgroundColor,
+          borderRadius: '8px',
         }}
       >
-        <Typography
+        <Box
           sx={{
-            fontSize: 12,
-            fontWeight: 700,
+            display: 'flex',
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
-          {convertStatusToText(status)}
-          {event.classId && ` - #${event.classId?.slice(-4)}`}
+          <Typography
+            sx={{
+              fontSize: 12,
+              fontWeight: 700,
+            }}
+          >
+            {convertStatusToText(status)}
+            {event.classId && ` - #${event.classId?.slice(-4)}`}
+          </Typography>
+        </Box>
+        <Typography sx={{ fontSize: 12 }}>
+          {getDisplayedTime(start, end)}
         </Typography>
       </Box>
-      <Typography sx={{ fontSize: 12 }}>
-        {getDisplayedTime(start, end)}
-      </Typography>
-      <Popper
-        open={onHover}
-        anchorEl={anchorEl}
-        placement="top-end"
-        modifiers={[
-          {
-            name: 'flip',
-            enabled: true,
-            options: {
-              altBoundary: false,
-            },
-          },
-          {
-            name: 'preventOverflow',
-            enabled: true,
-            options: {
-              altAxis: true,
-              altBoundary: true,
-              tether: true,
-              rootBoundary: 'document',
-              padding: 8,
-            },
-          },
-        ]}
-      >
-        {onHover && buildEventAction()}
-      </Popper>
-    </Box>
+    </Tooltip>
   );
 };
 
